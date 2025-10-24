@@ -1,3 +1,14 @@
-# TODO for Creating Index Display in view/admin/datauser
+# TODO for Creating All Admin Index Displays
 
-- [x] Update resources/views/admin/datauser/index.blade.php to extend layouts.app and complete the table display with user data looping.
+- [x] Update resources/views/admin/datauser/index.blade.php (already done)
+- [x] Create controllers and views for:
+  - datakategori
+  - datakategoriklinis
+  - datapemilik
+  - datapet
+  - datarekammedis
+  - datatindakan
+  - jenishewan
+  - manajemenrole
+  - pemilik
+  - rashewan
