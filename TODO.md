@@ -1,0 +1,4 @@
+- [x] Modify RelationController: Add index method to fetch users with roles and pemilik, pass to view.
+- [x] Create view: resources/views/admin/relations.blade.php with a table displaying user data, roles, and pemilik.
+- [x] Update web.php: Add Route::get('/admin/relations', [RelationController::class, 'index'])->name('admin.relations').
+- [x] Followup: Run php artisan serve and visit /admin/relations to verify.

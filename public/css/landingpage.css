@@ -1,0 +1,35 @@
+/*
+  File: landingpage.css
+  Description: Styles specific to the Home page (hero section) only.
+*/
+
+.hero-section {
+    /* PENTING: Ganti path gambar ini agar sesuai dengan proyek Laravel Anda */
+    background: linear-gradient(rgba(30, 58, 138, 0.85), rgba(30, 58, 138, 0.7)), url('/images/background-rshp.jpg') no-repeat center center/cover;
+    color: var(--surface-color);
+    text-align: center;
+    padding: 5rem 0;
+}
+
+.hero-section h1 {
+    color: var(--surface-color);
+    font-size: 2.8rem;
+    margin-bottom: 1rem;
+}
+
+.hero-section p {
+    font-size: 1.1rem;
+    max-width: 700px;
+    margin: 0 auto 2rem auto;
+    font-weight: 400;
+}
+
+/* --- Responsive Design for Hero Section --- */
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 4rem 0; /* Padding sedikit dikurangi di layar kecil */
+    }
+    .hero-section h1 {
+        font-size: 2.2rem;
+    }
+}
