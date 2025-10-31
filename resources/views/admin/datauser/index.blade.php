@@ -18,7 +18,7 @@
                 <td class="py-2 px-4 border-b text-center">{{ $index + 1 }}</td>
                 <td class="py-2 px-4 border-b">{{ $user->nama }}</td>
                 <td class="py-2 px-4 border-b">{{ $user->email }}</td>
-                <td class="py-2 px-4 border-b">{{ $user->roles->pluck('nama_role')->join(', ') }}</td>
+                <td class="py-2 px-4 border-b">{{ $user->roles->pluck('idrole')->join(', ') }}</td>
             </tr>
             @endforeach
         </tbody>

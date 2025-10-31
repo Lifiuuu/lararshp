@@ -15,11 +15,16 @@ class Pemilik extends Model
 
     public function user()
     {
-        return $this->belongsTo(DataUser::class, 'iduser', 'iduser');
+        return $this->belongsTo(User::class, 'iduser', 'iduser');
     }
 
     public function pets()
     {
         return $this->hasMany(Pet::class, 'idpemilik', 'idpemilik');
+    }
+    
+    public function rekamMedis()
+    {
+        return $this->hasMany(RekamMedis::class, 'idpemilik', 'idpemilik');
     }
 }

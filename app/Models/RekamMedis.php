@@ -10,17 +10,26 @@ class RekamMedis extends Model
     protected $primaryKey = 'idrekam_medis';
     public $incrementing = true;
     protected $keyType = 'int';
-    protected $fillable = ['created_at', 'anamnesa', 'temuan_klinis', 'diagnosa', 'idpet', 'dokter_pemeriksa'];
+    protected $fillable = ['created_at', 'anamnesa', 'temuan_klinis', 'diagnosa', 'idreservasi_dokter', 'dokter_pemeriksa'];
     public $timestamps = false;
 
-    public function pet()
+    public function temuDokter()
     {
-        return $this->belongsTo(Pet::class, 'idpet', 'idpet');
+        return $this->belongsTo(TemuDokter::class, 'idreservasi_dokter', 'idreservasi_dokter');
     }
 
     public function roleUser()
     {
         return $this->belongsTo(RoleUser::class, 'dokter_pemeriksa', 'idrole_user');
+    }
+
+    public function pet()
+    {
+        return $this->belongsTo(Pet::class, 'idpet', 'idpet');
+    }
+    public function pemilik()
+    {
+        return $this->belongsTo(Pemilik::class, 'idpemilik', 'idpemilik');
     }
 
     public function detailRekamMedis()
