@@ -1,10 +1,9 @@
-import 'bootstrap';
-
 /**
- * We'll load the axios HTTP library which allows us to easily issue requests
- * to our Laravel back-end. This library automatically handles sending the
- * CSRF token as a header based on the value of the "XSRF" token cookie.
+ * Bootstrap JS removed. Project uses custom CSS in public/css/global.css
+ * If you need lightweight UI interactions (eg. toggles), add small vanilla JS here.
  */
+
+// axios setup
 
 import axios from 'axios';
 window.axios = axios;

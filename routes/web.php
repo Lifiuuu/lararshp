@@ -34,19 +34,20 @@ Route::get('/cekkoneksi', [sitecontroller::class, 'cekkoneksi'])->name('cekkonek
 
 Auth::routes();
 
-Route::middleware(['administrator'])->group(function () {
-    Route::get('/admin/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('admin.dashboard');
-    Route::get('/admin/datauser', [DatauserController::class, 'index'])->name('admin.datauser.index');
-    Route::get('/admin/datapemilik', [DatapemilikController::class, 'index'])->name('admin.datapemilik.index');
-    Route::get('/admin/datakategori', [DatakategoriController::class, 'index'])->name('admin.datakategori.index');
-    Route::get('/admin/datakategoriklinis', [DatakategoriklinisController::class, 'index'])->name('admin.datakategoriklinis.index');
-    Route::get('/admin/datapet', [DatapetController::class, 'index'])->name('admin.datapet.index');
-    Route::get('/admin/datarekammedis', [DatarekammedisController::class, 'index'])->name('admin.datarekammedis.index');
-    Route::get('/admin/datatindakan', [DatatindakanController::class, 'index'])->name('admin.datatindakan.index');
-    Route::get('/admin/jenishewan', [JenishewanController::class, 'index'])->name('admin.jenishewan.index');
-    Route::get('/admin/manajemenrole', [ManajemenroleController::class, 'index'])->name('admin.manajemenrole.index');
-    Route::get('/admin/pemilik', [PemilikController::class, 'index'])->name('admin.pemilik.index');
-    Route::get('/admin/rashewan', [RashewanController::class, 'index'])->name('admin.rashewan.index');
+Route::prefix('admin')->name('admin.')->middleware(['administrator'])->group(function () {
+    Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
+
+    Route::resource('datauser', DatauserController::class);
+    Route::resource('datapemilik', DatapemilikController::class);
+    Route::resource('datakategori', DatakategoriController::class);
+    Route::resource('datakategoriklinis', DatakategoriklinisController::class);
+    Route::resource('datapet', DatapetController::class);
+    Route::resource('datarekammedis', DatarekammedisController::class);
+    Route::resource('datatindakan', DatatindakanController::class);
+    Route::resource('jenishewan', JenishewanController::class);
+    Route::resource('manajemenrole', ManajemenroleController::class);
+    Route::resource('pemilik', PemilikController::class);
+    Route::resource('rashewan', RashewanController::class);
 });
 
 Route::middleware(['dokter'])->group(function () {

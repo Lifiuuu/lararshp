@@ -218,3 +218,49 @@ h1, h2, h3, h4, h5, h6 {
         font-size: 1.8rem;
     }
 }
+
+/* --- Utility form & card styles to support scaffolded auth views --- */
+.card {
+    background: var(--surface-color);
+    padding: 0;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+.card-header{
+    padding: 12px 16px;
+    background: linear-gradient(90deg, rgba(30,58,138,0.03), rgba(30,58,138,0.01));
+    border-bottom: 1px solid rgba(16,24,40,0.04);
+    font-weight:700; color:var(--heading-color);
+}
+.card-body{ padding:16px; }
+
+.form-control{
+    width:100%;
+    padding:10px 12px;
+    border-radius:8px;
+    border:1px solid rgba(16,24,40,0.08);
+    background:var(--surface-color);
+    color:var(--text-color);
+    margin-top:6px;
+}
+.form-label{ display:block; font-weight:600; margin-bottom:6px; color:var(--heading-color); }
+.form-check{ display:flex; align-items:center; gap:8px; }
+.invalid-feedback{ color:#dc2626; font-size:0.9rem; margin-top:6px; }
+.btn-link{ background:transparent; border:0; color:var(--primary-color); text-decoration:underline; cursor:pointer; padding:0; }
+.d-inline{ display:inline-block; }
+.justify-content-center{ display:flex; justify-content:center; }
+
+/* --- Auth pages helpers --- */
+.auth-wrapper{
+    max-width:720px;
+    margin: 2.5rem auto;
+    padding: 0 12px;
+}
+.form-group{ margin-bottom:12px; }
+.form-actions{ display:flex; gap:8px; align-items:center; }
+
+/* Alerts */
+.alert{ padding:12px 14px; border-radius:8px; margin-bottom:12px; }
+.alert-success{ background:#ECFDF5; color:#065F46; }
+
