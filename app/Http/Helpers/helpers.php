@@ -11,13 +11,3 @@ if (! function_exists('normalize_name')) {
         return CommonStringHelper::normalizeName($name);
     }
 }
-
-if (! function_exists('validate_unique_name')) {
-    /**
-     * Wrapper: validate unique name using CommonStringHelper::validateUniqueName
-     */
-    function validate_unique_name(string $modelClass, string $fieldName, $value, $excludeId = null): bool
-    {
-        return CommonStringHelper::validateUniqueName($modelClass, $fieldName, $value, $excludeId);
-    }
-}

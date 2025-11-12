@@ -22,26 +22,42 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($rekamMediss as $index => $rekamMedis)
-            <tr>
-                <td class="py-2 px-4 border-b text-center">{{ $index + 1 }}</td>
-                <td class="py-2 px-4 border-b">{{ $rekamMedis->idrekam_medis }}</td>
-                <td class="py-2 px-4 border-b">{{ $rekamMedis->created_at }}</td>
-                <td class="py-2 px-4 border-b">{{ $rekamMedis->anamnesa }}</td>
-                <td class="py-2 px-4 border-b">{{ $rekamMedis->temuan_klinis }}</td>
-                <td class="py-2 px-4 border-b">{{ $rekamMedis->diagnosa }}</td>
-                <td class="py-2 px-4 border-b">{{ $rekamMedis->idreservasi_dokter }}</td>
-                <td class="py-2 px-4 border-b">{{ $rekamMedis->temuDokter->pet->nama ?? 'N/A' }}</td>
-                <td class="py-2 px-4 border-b">{{ $rekamMedis->roleUser->user->nama ?? 'N/A' }}</td>
-                <td class="actions">
-                    <a href="{{ route('admin.datarekammedis.edit', $rekamMedis->id ?? $rekamMedis->idrekam_medis) }}" class="btn-admin ghost">Edit</a>
-                    <form action="{{ route('admin.datarekammedis.destroy', $rekamMedis->id ?? $rekamMedis->idrekam_medis) }}" method="POST" style="display:inline-block" onsubmit="return confirm('Hapus rekam medis ini?')">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn-admin warn">Hapus</button>
-                    </form>
-                </td>
-            </tr>
+            @php
+                $groups = $rekamMediss->groupBy(function($r) {
+                    // group by pet name where possible
+                    return $r->temuDokter->pet->nama ?? $r->pet->nama ?? 'N/A';
+                });
+                $rowNumber = 0;
+            @endphp
+
+            @foreach($groups as $petName => $list)
+                @php $count = $list->count(); @endphp
+                @foreach($list as $rekam)
+                    @php $rowNumber++; @endphp
+                    <tr>
+                        <td class="py-2 px-4 border-b text-center">{{ $rowNumber }}</td>
+                        <td class="py-2 px-4 border-b">{{ $rekam->idrekam_medis }}</td>
+                        <td class="py-2 px-4 border-b">{{ $rekam->created_at }}</td>
+                        <td class="py-2 px-4 border-b">{{ $rekam->anamnesa }}</td>
+                        <td class="py-2 px-4 border-b">{{ $rekam->temuan_klinis }}</td>
+                        <td class="py-2 px-4 border-b">{{ $rekam->diagnosa }}</td>
+                        <td class="py-2 px-4 border-b">{{ $rekam->idreservasi_dokter }}</td>
+
+                        @if($loop->first)
+                            <td class="py-2 px-4 border-b" rowspan="{{ $count }}">{{ $petName }}</td>
+                        @endif
+
+                        <td class="py-2 px-4 border-b">{{ $rekam->roleUser->user->nama ?? 'N/A' }}</td>
+                        <td class="actions">
+                            <a href="{{ route('admin.datarekammedis.edit', $rekam->id ?? $rekam->idrekam_medis) }}" class="btn-admin ghost">Edit</a>
+                            <form action="{{ route('admin.datarekammedis.destroy', $rekam->id ?? $rekam->idrekam_medis) }}" method="POST" style="display:inline-block" onsubmit="return confirm('Hapus rekam medis ini?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn-admin warn">Hapus</button>
+                            </form>
+                        </td>
+                    </tr>
+                @endforeach
             @endforeach
         </tbody>
         </table>

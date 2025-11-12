@@ -20,24 +20,39 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($pets as $index => $pet)
-            <tr>
-                <td class="py-2 px-4 border-b text-center">{{ $index + 1 }}</td>
-                <td class="py-2 px-4 border-b">{{ $pet->nama }}</td>
-                <td class="py-2 px-4 border-b">{{ $pet->tanggal_lahir }}</td>
-                <td class="py-2 px-4 border-b">{{ $pet->warna_tanda }}</td>
-                <td class="py-2 px-4 border-b">{{ $pet->jenis_kelamin }}</td>
-                <td class="py-2 px-4 border-b">{{ $pet->pemilik->user->nama ?? 'N/A' }}</td>
-                <td class="py-2 px-4 border-b">{{ $pet->rasHewan->nama_ras ?? 'N/A' }}</td>
-                <td class="actions">
-                    <a href="{{ route('admin.datapet.edit', $pet->id ?? $pet->idpet) }}" class="btn-admin ghost">Edit</a>
-                    <form action="{{ route('admin.datapet.destroy', $pet->id ?? $pet->idpet) }}" method="POST" style="display:inline-block" onsubmit="return confirm('Hapus data pet ini?')">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn-admin warn">Hapus</button>
-                    </form>
-                </td>
-            </tr>
+            @php
+                $groups = $pets->groupBy(function($p) {
+                    return $p->pemilik->user->nama ?? $p->pemilik->no_wa ?? 'N/A';
+                });
+                $rowNumber = 0;
+            @endphp
+
+            @foreach($groups as $pemilikName => $petList)
+                @php $count = $petList->count(); @endphp
+                @foreach($petList as $pet)
+                    @php $rowNumber++; @endphp
+                    <tr>
+                        <td class="py-2 px-4 border-b text-center">{{ $rowNumber }}</td>
+                        <td class="py-2 px-4 border-b">{{ $pet->nama }}</td>
+                        <td class="py-2 px-4 border-b">{{ $pet->tanggal_lahir }}</td>
+                        <td class="py-2 px-4 border-b">{{ $pet->warna_tanda }}</td>
+                        <td class="py-2 px-4 border-b">{{ $pet->jenis_kelamin }}</td>
+
+                        @if($loop->first)
+                            <td class="py-2 px-4 border-b" rowspan="{{ $count }}">{{ $pemilikName }}</td>
+                        @endif
+
+                        <td class="py-2 px-4 border-b">{{ $pet->rasHewan->nama_ras ?? 'N/A' }}</td>
+                        <td class="actions">
+                            <a href="{{ route('admin.datapet.edit', $pet->id ?? $pet->idpet) }}" class="btn-admin ghost">Edit</a>
+                            <form action="{{ route('admin.datapet.destroy', $pet->id ?? $pet->idpet) }}" method="POST" style="display:inline-block" onsubmit="return confirm('Hapus data pet ini?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn-admin warn">Hapus</button>
+                            </form>
+                        </td>
+                    </tr>
+                @endforeach
             @endforeach
         </tbody>
         </table>

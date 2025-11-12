@@ -16,20 +16,36 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($rasHewans as $index => $rasHewan)
-            <tr>
-                <td class="py-2 px-4 border-b text-center">{{ $index + 1 }}</td>
-                <td class="py-2 px-4 border-b">{{ $rasHewan->nama_ras }}</td>
-                <td class="py-2 px-4 border-b">{{ $rasHewan->jenisHewan->nama_jenis_hewan ?? 'N/A' }}</td>
-                <td class="actions">
-                    <a href="{{ route('admin.rashewan.edit', $rasHewan->idras_hewan ?? $rasHewan->idras ?? $rasHewan->id) }}" class="btn-admin ghost">Edit</a>
-                    <form action="{{ route('admin.rashewan.destroy', $rasHewan->idras_hewan ?? $rasHewan->idras ?? $rasHewan->id) }}" method="POST" style="display:inline-block" onsubmit="return confirm('Hapus ras hewan ini?')">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn-admin warn">Hapus</button>
-                    </form>
-                </td>
-            </tr>
+            @php
+                // Group ras by jenis hewan name; provide fallback label when missing
+                $groups = $rasHewans->groupBy(function($r) {
+                    return $r->jenisHewan->nama_jenis_hewan ?? 'N/A';
+                });
+                $rowNumber = 0;
+            @endphp
+
+            @foreach($groups as $jenisName => $rasList)
+                @php $count = $rasList->count(); @endphp
+                @foreach($rasList as $ras)
+                    @php $rowNumber++; @endphp
+                    <tr>
+                        <td class="py-2 px-4 border-b text-center">{{ $rowNumber }}</td>
+                        <td class="py-2 px-4 border-b">{{ $ras->nama_ras }}</td>
+
+                        @if($loop->first)
+                            <td class="py-2 px-4 border-b" rowspan="{{ $count }}">{{ $jenisName }}</td>
+                        @endif
+
+                        <td class="actions">
+                            <a href="{{ route('admin.rashewan.edit', $ras->idras_hewan ?? $ras->idras ?? $ras->id) }}" class="btn-admin ghost">Edit</a>
+                            <form action="{{ route('admin.rashewan.destroy', $ras->idras_hewan ?? $ras->idras ?? $ras->id) }}" method="POST" style="display:inline-block" onsubmit="return confirm('Hapus ras hewan ini?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn-admin warn">Hapus</button>
+                            </form>
+                        </td>
+                    </tr>
+                @endforeach
             @endforeach
         </tbody>
         </table>

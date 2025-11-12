@@ -16,12 +16,26 @@ class DatatindakanController extends Controller
 
     public function create()
     {
-        return redirect()->route('admin.datatindakan.index')->with('info', 'Create form not implemented yet.');
+        $kategoris = \App\Models\Kategori::all();
+        $kategoriKliniss = \App\Models\KategoriKlinis::all();
+        return view('admin.datatindakan.create', compact('kategoris', 'kategoriKliniss'));
     }
 
     public function store(Request $request)
     {
-        return redirect()->route('admin.datatindakan.index')->with('info', 'Store not implemented yet.');
+        $validatedData = $request->validate([
+            'kode' => 'required|string|max:50|unique:kode_tindakan_terapi,kode',
+            'deskripsi_tindakan_terapi' => 'required|string',
+            'idkategori' => 'required|exists:kategori,idkategori',
+            'idkategori_klinis' => 'required|exists:kategori_klinis,idkategori_klinis',
+        ]);
+
+        // Normalize description for consistent casing
+        $validatedData['deskripsi_tindakan_terapi'] = normalize_name($validatedData['deskripsi_tindakan_terapi']);
+
+        KodeTindakanTerapi::create($validatedData);
+
+        return redirect()->route('admin.datatindakan.index')->with('success', 'Data tindakan berhasil ditambahkan.');
     }
 
     public function show($id)

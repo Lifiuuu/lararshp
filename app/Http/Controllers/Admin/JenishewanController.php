@@ -58,15 +58,11 @@ class JenishewanController extends Controller
     protected function createjenishewan(array $data){
         try {
             return JenisHewan::create([
-                'nama_jenis_hewan' => $this->formatNamaJenisHewan($data['nama_jenis_hewan']),
+                'nama_jenis_hewan' => normalize_name($data['nama_jenis_hewan']),
             ]);
         } catch (\Exception $e) {
             throw new \Exception('gagal menyimpan data jenis hewan: ' . $e->getMessage());
         }
-    }
-
-    protected function formatNamaJenisHewan($nama){
-        return trim(ucwords(strtolower($nama)));
     }
 
     public function show($id)

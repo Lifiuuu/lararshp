@@ -57,16 +57,12 @@ class DatakategoriController extends Controller
     protected function createkategori(array $data){
         try {
             return Kategori::create([
-                'nama_kategori' => $this->formatNamaKategori($data['nama_kategori']),
+                'nama_kategori' => normalize_name($data['nama_kategori']),
             ]);
         } catch (\Exception $e) {
             // Handle exception, log error, etc.
             throw $e;
         }
-    }
-
-    protected function formatNamaKategori($nama){
-        return trim(ucwords(strtolower($nama)));
     }
 
     public function show($id)

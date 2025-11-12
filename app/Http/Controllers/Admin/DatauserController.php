@@ -19,12 +19,38 @@ class DatauserController extends Controller
 
     public function create()
     {
-        return redirect()->route('admin.datauser.index')->with('info', 'Create form not implemented yet.');
+        $roles = Role::all();
+        return view('admin.datauser.create', compact('roles'));
     }
 
     public function store(Request $request)
     {
-        return redirect()->route('admin.datauser.index')->with('info', 'Store not implemented yet.');
+        $validatedData = $request->validate([
+            'nama' => 'required|string|max:255|min:3',
+            'email' => 'required|email|unique:user,email',
+            'password' => 'required|string|min:8|confirmed',
+            'roles' => 'required|array|min:1',
+            'roles.*' => 'exists:role,idrole',
+        ]);
+
+        $validatedData['nama'] = normalize_name($validatedData['nama']);
+        $validatedData['password'] = bcrypt($validatedData['password']);
+
+        $user = DataUser::create([
+            'nama' => $validatedData['nama'],
+            'email' => $validatedData['email'],
+            'password' => $validatedData['password'],
+        ]);
+
+        foreach ($validatedData['roles'] as $roleId) {
+            RoleUser::create([
+                'iduser' => $user->iduser,
+                'idrole' => $roleId,
+                'status' => 'active',
+            ]);
+        }
+
+        return redirect()->route('admin.datauser.index')->with('success', 'User berhasil ditambahkan.');
     }
 
     public function show($id)

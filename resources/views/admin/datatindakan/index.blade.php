@@ -18,22 +18,37 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($tindakans as $index => $tindakan)
-            <tr>
-                <td class="py-2 px-4 border-b text-center">{{ $index + 1 }}</td>
-                <td class="py-2 px-4 border-b">{{ $tindakan->kode }}</td>
-                <td class="py-2 px-4 border-b">{{ $tindakan->deskripsi_tindakan_terapi }}</td>
-                <td class="py-2 px-4 border-b">{{ $tindakan->kategori->nama_kategori ?? 'N/A' }}</td>
-                <td class="py-2 px-4 border-b">{{ $tindakan->kategoriKlinis->nama_kategori_klinis ?? 'N/A' }}</td>
-                <td class="actions">
-                    <a href="{{ route('admin.datatindakan.edit', $tindakan->id ?? $tindakan->kode) }}" class="btn-admin ghost">Edit</a>
-                    <form action="{{ route('admin.datatindakan.destroy', $tindakan->id ?? $tindakan->kode) }}" method="POST" style="display:inline-block" onsubmit="return confirm('Hapus tindakan ini?')">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn-admin warn">Hapus</button>
-                    </form>
-                </td>
-            </tr>
+            @php
+                $groups = $tindakans->groupBy(function($t) {
+                    return $t->kategori->nama_kategori ?? 'N/A';
+                });
+                $rowNumber = 0;
+            @endphp
+
+            @foreach($groups as $kategoriName => $list)
+                @php $count = $list->count(); @endphp
+                @foreach($list as $t)
+                    @php $rowNumber++; @endphp
+                    <tr>
+                        <td class="py-2 px-4 border-b text-center">{{ $rowNumber }}</td>
+                        <td class="py-2 px-4 border-b">{{ $t->kode }}</td>
+                        <td class="py-2 px-4 border-b">{{ $t->deskripsi_tindakan_terapi }}</td>
+
+                        @if($loop->first)
+                            <td class="py-2 px-4 border-b" rowspan="{{ $count }}">{{ $kategoriName }}</td>
+                        @endif
+
+                        <td class="py-2 px-4 border-b">{{ $t->kategoriKlinis->nama_kategori_klinis ?? 'N/A' }}</td>
+                        <td class="actions">
+                            <a href="{{ route('admin.datatindakan.edit', $t->id ?? $t->kode) }}" class="btn-admin ghost">Edit</a>
+                            <form action="{{ route('admin.datatindakan.destroy', $t->id ?? $t->kode) }}" method="POST" style="display:inline-block" onsubmit="return confirm('Hapus tindakan ini?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn-admin warn">Hapus</button>
+                            </form>
+                        </td>
+                    </tr>
+                @endforeach
             @endforeach
         </tbody>
         </table>

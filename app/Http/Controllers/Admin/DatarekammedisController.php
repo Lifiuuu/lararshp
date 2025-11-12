@@ -16,12 +16,33 @@ class DatarekammedisController extends Controller
 
     public function create()
     {
-        return redirect()->route('admin.datarekammedis.index')->with('info', 'Create form not implemented yet.');
+        $temuDokters = \App\Models\TemuDokter::with('pet')->get();
+        $dokters = \App\Models\RoleUser::with('user')->whereHas('role', function($q) {
+            $q->where('nama_role', 'Dokter');
+        })->get();
+        return view('admin.datarekammedis.create', compact('temuDokters', 'dokters'));
     }
 
     public function store(Request $request)
     {
-        return redirect()->route('admin.datarekammedis.index')->with('info', 'Store not implemented yet.');
+        $validatedData = $request->validate([
+            'idreservasi_dokter' => 'required|exists:temu_dokter,idreservasi_dokter',
+            'dokter_pemeriksa' => 'required|exists:role_user,idrole_user',
+            'anamnesa' => 'required|string',
+            'temuan_klinis' => 'required|string',
+            'diagnosa' => 'required|string',
+        ]);
+
+    // Normalize text fields using helper for consistent formatting
+    $validatedData['anamnesa'] = normalize_name($validatedData['anamnesa']);
+    $validatedData['temuan_klinis'] = normalize_name($validatedData['temuan_klinis']);
+    $validatedData['diagnosa'] = normalize_name($validatedData['diagnosa']);
+
+    $validatedData['created_at'] = now();
+
+    RekamMedis::create($validatedData);
+
+        return redirect()->route('admin.datarekammedis.index')->with('success', 'Rekam medis berhasil ditambahkan.');
     }
 
     public function show($id)

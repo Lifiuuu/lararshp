@@ -57,7 +57,7 @@ class DatakategoriklinisController extends Controller
     protected function createkategoriklinis(array $data){
         try {
             return KategoriKlinis::create([
-                'nama_kategori_klinis' => $this->formatNamaKategoriKlinis($data['nama_kategori_klinis']),
+                'nama_kategori_klinis' => normalize_name($data['nama_kategori_klinis']),
             ]);
         } catch (\Exception $e) {
             throw new \Exception('Gagal menyimpan data kategori klinis: ' . $e->getMessage());

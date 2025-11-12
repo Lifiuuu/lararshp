@@ -13,15 +13,5 @@ class CommonStringHelper
         $name = ucwords($name);
         return $name;
     }
-
-    public static function validateUniqueName($modelClass, $fieldName, $value, $excludeId = null)
-    {
-        $pk = (new $modelClass)->getKeyName();
-        $query = $modelClass::where($fieldName, $value);
-        if ($excludeId) {
-            $query->where($pk, '!=', $excludeId);
-        }
-        return !$query->exists();
-    }
 }
 ?>

@@ -24,8 +24,10 @@ class DatapemilikController extends Controller
         $validatedData = $request->validate([
             'nama' => 'required|string|max:255|min:3',
             'alamat' => 'required|string|max:255|min:5',
-            'telepon' => 'required|string|max:20|min:12',
+            'telepon' => 'required|integer|digits_between:12,20',
         ]);
+
+        $validatedData['nama'] = normalize_name($validatedData['nama']);
 
         Pemilik::create($validatedData);
 

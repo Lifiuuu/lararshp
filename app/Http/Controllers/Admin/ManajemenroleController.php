@@ -16,12 +16,20 @@ class ManajemenroleController extends Controller
 
     public function create()
     {
-        return redirect()->route('admin.manajemenrole.index')->with('info', 'Create form not implemented yet.');
+        return view('admin.manajemenrole.create');
     }
 
     public function store(Request $request)
     {
-        return redirect()->route('admin.manajemenrole.index')->with('info', 'Store not implemented yet.');
+        $validatedData = $request->validate([
+            'nama_role' => 'required|string|max:255|min:3|unique:role,nama_role',
+        ]);
+
+        $validatedData['nama_role'] = normalize_name($validatedData['nama_role']);
+
+        Role::create($validatedData);
+
+        return redirect()->route('admin.manajemenrole.index')->with('success', 'Role berhasil ditambahkan.');
     }
 
     public function show($id)

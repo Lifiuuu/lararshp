@@ -16,12 +16,22 @@ class RashewanController extends Controller
 
     public function create()
     {
-        return redirect()->route('admin.rashewan.index')->with('info', 'Create form not implemented yet.');
+        $jenisHewans = \App\Models\JenisHewan::all();
+        return view('admin.rashewan.create', compact('jenisHewans'));
     }
 
     public function store(Request $request)
     {
-        return redirect()->route('admin.rashewan.index')->with('info', 'Store not implemented yet.');
+        $validatedData = $request->validate([
+            'nama_ras' => 'required|string|max:255|min:3|unique:ras_hewan,nama_ras',
+            'idjenis_hewan' => 'required|exists:jenis_hewan,idjenis_hewan',
+        ]);
+
+        $validatedData['nama_ras'] = normalize_name($validatedData['nama_ras']);
+
+        RasHewan::create($validatedData);
+
+        return redirect()->route('admin.rashewan.index')->with('success', 'Ras hewan berhasil ditambahkan.');
     }
 
     public function show($id)
