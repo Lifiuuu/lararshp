@@ -1,4 +1,4 @@
-@extends('layouts.admin.admin')
+@extends('layouts.lte.main')
 @section('title', 'Tambah Jenis Hewan')
 @section('content')
     <div class="container">

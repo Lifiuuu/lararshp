@@ -5,12 +5,14 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Role;
+use Illuminate\Support\Facades\DB;
 
 class ManajemenroleController extends Controller
 {
     public function index()
     {
-        $roles = Role::all();
+        // $roles = Role::all();
+        $roles = DB::table('role')->get();
         return view('admin.manajemenrole.index', compact('roles'));
     }
 
@@ -27,7 +29,8 @@ class ManajemenroleController extends Controller
 
         $validatedData['nama_role'] = normalize_name($validatedData['nama_role']);
 
-        Role::create($validatedData);
+        // Role::create($validatedData);
+        DB::table('role')->insert($validatedData);
 
         return redirect()->route('admin.manajemenrole.index')->with('success', 'Role berhasil ditambahkan.');
     }
@@ -49,8 +52,13 @@ class ManajemenroleController extends Controller
 
     public function destroy($id)
     {
-        $role = Role::findOrFail($id);
-        $role->delete();
+        // $role = Role::findOrFail($id);
+        // $role->delete();
+        $role = DB::table('role')->where('idrole', $id)->first();
+        if (!$role) {
+            abort(404);
+        }
+        DB::table('role')->where('idrole', $id)->delete();
         return redirect()->route('admin.manajemenrole.index')->with('success', 'Role deleted.');
     }
 }

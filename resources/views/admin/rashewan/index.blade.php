@@ -1,4 +1,4 @@
-@extends('layouts.admin.admin')
+@extends('layouts.lte.main')
 
 @section('content')
 <section class="container mx-auto p-4">
@@ -18,8 +18,9 @@
         <tbody>
             @php
                 // Group ras by jenis hewan name; provide fallback label when missing
+                // controller returns `nama_jenis_hewan` via join; fallback to relation if present
                 $groups = $rasHewans->groupBy(function($r) {
-                    return $r->jenisHewan->nama_jenis_hewan ?? 'N/A';
+                    return $r->nama_jenis_hewan ?? ($r->jenisHewan->nama_jenis_hewan ?? 'N/A');
                 });
                 $rowNumber = 0;
             @endphp

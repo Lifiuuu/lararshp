@@ -1,4 +1,4 @@
-@extends('layouts.site.app')
+@extends('layouts.app')
 
 @section('title', 'Informasi Jadwal Dokter Jaga')
 

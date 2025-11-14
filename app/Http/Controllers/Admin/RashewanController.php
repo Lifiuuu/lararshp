@@ -5,18 +5,24 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\RasHewan;
+use Illuminate\Support\Facades\DB;
 
 class RashewanController extends Controller
 {
     public function index()
     {
-        $rasHewans = RasHewan::with('jenisHewan')->get();
+        // $rasHewans = RasHewan::with('jenisHewan')->get();
+        $rasHewans = DB::table('ras_hewan')
+            ->join('jenis_hewan', 'ras_hewan.idjenis_hewan', '=', 'jenis_hewan.idjenis_hewan')
+            ->select('ras_hewan.*', 'jenis_hewan.nama_jenis_hewan')
+            ->get();
         return view('admin.rashewan.index', compact('rasHewans'));
     }
 
     public function create()
     {
-        $jenisHewans = \App\Models\JenisHewan::all();
+        // $jenisHewans = \App\Models\JenisHewan::all();
+        $jenisHewans = DB::table('jenis_hewan')->get();
         return view('admin.rashewan.create', compact('jenisHewans'));
     }
 
@@ -29,7 +35,8 @@ class RashewanController extends Controller
 
         $validatedData['nama_ras'] = normalize_name($validatedData['nama_ras']);
 
-        RasHewan::create($validatedData);
+        // RasHewan::create($validatedData);
+        DB::table('ras_hewan')->insert($validatedData);
 
         return redirect()->route('admin.rashewan.index')->with('success', 'Ras hewan berhasil ditambahkan.');
     }
@@ -51,8 +58,13 @@ class RashewanController extends Controller
 
     public function destroy($id)
     {
-        $ras = RasHewan::findOrFail($id);
-        $ras->delete();
+        // $ras = RasHewan::findOrFail($id);
+        // $ras->delete();
+        $ras = DB::table('ras_hewan')->where('idras_hewan', $id)->first();
+        if (!$ras) {
+            abort(404);
+        }
+        DB::table('ras_hewan')->where('idras_hewan', $id)->delete();
         return redirect()->route('admin.rashewan.index')->with('success', 'Data deleted.');
     }
 }

@@ -1,4 +1,4 @@
-@extends('layouts.admin.admin')
+@extends('layouts.lte.main')
 
 @section('content')
 <section class="admin-content container mx-auto p-4">

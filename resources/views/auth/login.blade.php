@@ -4,8 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ __('Login') }} - {{ config('app.name', 'Application') }}</title>
-    <link rel="stylesheet" href="{{ asset('css/global.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/loginform.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/global.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/loginform.css') }}">
 </head>
 <body>
     <div class="page-center">

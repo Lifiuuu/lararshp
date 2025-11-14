@@ -1,4 +1,4 @@
-@extends('layouts.admin.admin')
+@extends('layouts.lte.main')
 
 @section('content')
 <section class="container mx-auto p-4">
@@ -19,8 +19,9 @@
         </thead>
         <tbody>
             @php
+                // use flat fields provided by controller (`nama_kategori`)
                 $groups = $tindakans->groupBy(function($t) {
-                    return $t->kategori->nama_kategori ?? 'N/A';
+                    return $t->nama_kategori ?? 'N/A';
                 });
                 $rowNumber = 0;
             @endphp
@@ -38,7 +39,7 @@
                             <td class="py-2 px-4 border-b" rowspan="{{ $count }}">{{ $kategoriName }}</td>
                         @endif
 
-                        <td class="py-2 px-4 border-b">{{ $t->kategoriKlinis->nama_kategori_klinis ?? 'N/A' }}</td>
+                        <td class="py-2 px-4 border-b">{{ $t->nama_kategori_klinis ?? 'N/A' }}</td>
                         <td class="actions">
                             <a href="{{ route('admin.datatindakan.edit', $t->id ?? $t->kode) }}" class="btn-admin ghost">Edit</a>
                             <form action="{{ route('admin.datatindakan.destroy', $t->id ?? $t->kode) }}" method="POST" style="display:inline-block" onsubmit="return confirm('Hapus tindakan ini?')">

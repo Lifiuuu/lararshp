@@ -1,4 +1,4 @@
-@extends('layouts.admin.admin')
+@extends('layouts.lte.main')
 
 @section('content')
 <section class="container mx-auto p-4">
@@ -20,7 +20,7 @@
             @foreach($pemiliks as $index => $pemilik)
             <tr>
                 <td class="py-2 px-4 border-b text-center">{{ $index + 1 }}</td>
-                <td class="py-2 px-4 border-b">{{ $pemilik->user->nama ?? 'N/A' }}</td>
+                <td class="py-2 px-4 border-b">{{ $pemilik->nama_user ?? 'N/A' }}</td>
                 <td class="py-2 px-4 border-b">{{ $pemilik->no_wa }}</td>
                 <td class="py-2 px-4 border-b">{{ $pemilik->alamat }}</td>
                 <td class="actions">

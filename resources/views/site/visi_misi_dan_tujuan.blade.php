@@ -1,4 +1,4 @@
-@extends('layouts.site.app')
+@extends('layouts.app')
 
 @section('title', 'Visi Misi dan Tujuan - RSHP Universitas Airlangga')
 

@@ -1,4 +1,4 @@
-@extends('layouts.admin.admin')
+@extends('layouts.lte.main')
 
 @section('content')
 <section class="container mx-auto p-4">
@@ -21,8 +21,9 @@
         </thead>
         <tbody>
             @php
+                // Group pets by owner name (controller provides flat fields `nama_pemilik` and `pemilik_no_wa`)
                 $groups = $pets->groupBy(function($p) {
-                    return $p->pemilik->user->nama ?? $p->pemilik->no_wa ?? 'N/A';
+                    return $p->nama_pemilik ?? $p->pemilik_no_wa ?? 'N/A';
                 });
                 $rowNumber = 0;
             @endphp
@@ -42,7 +43,7 @@
                             <td class="py-2 px-4 border-b" rowspan="{{ $count }}">{{ $pemilikName }}</td>
                         @endif
 
-                        <td class="py-2 px-4 border-b">{{ $pet->rasHewan->nama_ras ?? 'N/A' }}</td>
+                        <td class="py-2 px-4 border-b">{{ $pet->nama_ras ?? 'N/A' }}</td>
                         <td class="actions">
                             <a href="{{ route('admin.datapet.edit', $pet->id ?? $pet->idpet) }}" class="btn-admin ghost">Edit</a>
                             <form action="{{ route('admin.datapet.destroy', $pet->id ?? $pet->idpet) }}" method="POST" style="display:inline-block" onsubmit="return confirm('Hapus data pet ini?')">

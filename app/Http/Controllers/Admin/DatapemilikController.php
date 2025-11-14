@@ -5,12 +5,17 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Pemilik;
+use Illuminate\Support\Facades\DB;
 
 class DatapemilikController extends Controller
 {
     public function index()
     {
-        $pemiliks = Pemilik::with('user')->get();
+        // $pemiliks = Pemilik::with('user')->get();
+        $pemiliks = DB::table('pemilik')
+            ->leftJoin('user', 'pemilik.iduser', '=', 'user.iduser')
+            ->select('pemilik.*', 'user.nama as nama_user', 'user.email')
+            ->get();
         return view('admin.datapemilik.index', compact('pemiliks'));
     }
 
@@ -29,7 +34,8 @@ class DatapemilikController extends Controller
 
         $validatedData['nama'] = normalize_name($validatedData['nama']);
 
-        Pemilik::create($validatedData);
+        // Pemilik::create($validatedData);
+        DB::table('pemilik')->insert($validatedData);
 
         return redirect()->route('admin.datapemilik.index')->with('success', 'Data created successfully.');
     }
@@ -53,8 +59,13 @@ class DatapemilikController extends Controller
 
     public function destroy($id)
     {
-        $pemilik = Pemilik::findOrFail($id);
-        $pemilik->delete();
+        // $pemilik = Pemilik::findOrFail($id);
+        // $pemilik->delete();
+        $pemilik = DB::table('pemilik')->where('idpemilik', $id)->first();
+        if (!$pemilik) {
+            abort(404);
+        }
+        DB::table('pemilik')->where('idpemilik', $id)->delete();
         return redirect()->route('admin.datapemilik.index')->with('success', 'Data deleted.');
     }
 }

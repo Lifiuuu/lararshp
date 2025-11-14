@@ -1,4 +1,4 @@
-@extends('layouts.admin.admin')
+@extends('layouts.lte.main')
 
 @section('content')
 <section class="container mx-auto p-4">
@@ -23,9 +23,9 @@
         </thead>
         <tbody>
             @php
+                // Group by pet name. controller provides flat field `nama_pet`.
                 $groups = $rekamMediss->groupBy(function($r) {
-                    // group by pet name where possible
-                    return $r->temuDokter->pet->nama ?? $r->pet->nama ?? 'N/A';
+                    return $r->nama_pet ?? 'N/A';
                 });
                 $rowNumber = 0;
             @endphp
@@ -47,7 +47,7 @@
                             <td class="py-2 px-4 border-b" rowspan="{{ $count }}">{{ $petName }}</td>
                         @endif
 
-                        <td class="py-2 px-4 border-b">{{ $rekam->roleUser->user->nama ?? 'N/A' }}</td>
+                        <td class="py-2 px-4 border-b">{{ $rekam->nama_dokter ?? 'N/A' }}</td>
                         <td class="actions">
                             <a href="{{ route('admin.datarekammedis.edit', $rekam->id ?? $rekam->idrekam_medis) }}" class="btn-admin ghost">Edit</a>
                             <form action="{{ route('admin.datarekammedis.destroy', $rekam->id ?? $rekam->idrekam_medis) }}" method="POST" style="display:inline-block" onsubmit="return confirm('Hapus rekam medis ini?')">

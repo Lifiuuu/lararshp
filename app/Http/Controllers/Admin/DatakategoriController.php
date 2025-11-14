@@ -5,12 +5,14 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Kategori;
+use Illuminate\Support\Facades\DB;
 
 class DatakategoriController extends Controller
 {
     public function index()
     {
-        $kategoris = Kategori::all();
+        // $kategoris = Kategori::all();
+        $kategoris = DB::table('kategori')->get();
         return view('admin.datakategori.index', compact('kategoris'));
     }
 
@@ -56,9 +58,13 @@ class DatakategoriController extends Controller
 
     protected function createkategori(array $data){
         try {
-            return Kategori::create([
+            // return Kategori::create([
+            //     'nama_kategori' => normalize_name($data['nama_kategori']),
+            // ]);
+            $id = DB::table('kategori')->insertGetId([
                 'nama_kategori' => normalize_name($data['nama_kategori']),
             ]);
+            return (object)['idkategori' => $id, 'nama_kategori' => normalize_name($data['nama_kategori'])];
         } catch (\Exception $e) {
             // Handle exception, log error, etc.
             throw $e;
@@ -72,7 +78,11 @@ class DatakategoriController extends Controller
 
     public function edit($id)
     {
-        $kategori = Kategori::findOrFail($id);
+        // $kategori = Kategori::findOrFail($id);
+        $kategori = DB::table('kategori')->where('idkategori', $id)->first();
+        if (!$kategori) {
+            abort(404);
+        }
         return view('admin.datakategori.edit', compact('kategori'));
     }
 
@@ -83,8 +93,13 @@ class DatakategoriController extends Controller
 
     public function destroy($id)
     {
-        $kategori = Kategori::findOrFail($id);
-        $kategori->delete();
+        // $kategori = Kategori::findOrFail($id);
+        // $kategori->delete();
+        $kategori = DB::table('kategori')->where('idkategori', $id)->first();
+        if (!$kategori) {
+            abort(404);
+        }
+        DB::table('kategori')->where('idkategori', $id)->delete();
         return redirect()->route('admin.datakategori.index')->with('success', 'Data deleted.');
     }
 }

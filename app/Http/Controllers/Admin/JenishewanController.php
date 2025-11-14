@@ -5,12 +5,14 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\JenisHewan;
+use Illuminate\Support\Facades\DB;
 
 class JenishewanController extends Controller
 {
     public function index()
     {
-        $jenisHewans = JenisHewan::all();
+        // $jenisHewans = JenisHewan::all();
+        $jenisHewans = DB::table('jenis_hewan')->get();
         return view('admin.jenishewan.index', compact('jenisHewans'));
     }
 
@@ -57,9 +59,13 @@ class JenishewanController extends Controller
 
     protected function createjenishewan(array $data){
         try {
-            return JenisHewan::create([
+            // return JenisHewan::create([
+            //     'nama_jenis_hewan' => normalize_name($data['nama_jenis_hewan']),
+            // ]);
+            $id = DB::table('jenis_hewan')->insertGetId([
                 'nama_jenis_hewan' => normalize_name($data['nama_jenis_hewan']),
             ]);
+            return (object)['idjenis_hewan' => $id, 'nama_jenis_hewan' => normalize_name($data['nama_jenis_hewan'])];
         } catch (\Exception $e) {
             throw new \Exception('gagal menyimpan data jenis hewan: ' . $e->getMessage());
         }
@@ -82,8 +88,13 @@ class JenishewanController extends Controller
 
     public function destroy($id)
     {
-        $jenis = JenisHewan::findOrFail($id);
-        $jenis->delete();
+        // $jenis = JenisHewan::findOrFail($id);
+        // $jenis->delete();
+        $jenis = DB::table('jenis_hewan')->where('idjenis_hewan', $id)->first();
+        if (!$jenis) {
+            abort(404);
+        }
+        DB::table('jenis_hewan')->where('idjenis_hewan', $id)->delete();
         return redirect()->route('admin.jenishewan.index')->with('success', 'Data deleted.');
     }
 }
