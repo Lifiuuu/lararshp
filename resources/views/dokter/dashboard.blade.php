@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.lte.main')
 
 @section('content')
 <div class="container">
@@ -14,10 +14,10 @@
                         </div>
                     @endif
 
-                    {{ __('You are logged in!') }} {{ session('user_role') }}
+                    {{ __('You are logged in!') }}
 
                     <div class="row mt-4">
-                        @if($role == 2)
+                        @if(session('user_role') == 2)
                             <h4>Data Rekam Medis & Tindakan</h4>
                             <div class="col-md-6 mb-2">
                                 <a href="{{ route('dokter.datarekammedis.index') }}" class="btn btn-secondary btn-block">

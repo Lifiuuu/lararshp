@@ -9,6 +9,7 @@ use App\Models\Pemilik;
 use App\Models\Role;
 use App\Models\RoleUser;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class DatauserController extends Controller
 {
@@ -82,22 +83,209 @@ class DatauserController extends Controller
             ]);
         }
 
+        // Map selected role ids to role names so we can react to role choices
+        $roleNames = DB::table('role')->whereIn('idrole', $validatedData['roles'])->pluck('nama_role', 'idrole');
+
+        // If Pemilik role selected, store pemilik extra data into `pemilik` table if table exists
+        $pemilikRoleIds = $roleNames->filter(function($name){ return strtolower($name) === 'pemilik'; })->keys();
+        if ($pemilikRoleIds->isNotEmpty()) {
+            // validate pemilik fields
+            $pemilikValidated = $request->validate([
+                'pemilik_no_wa' => 'nullable|string|max:45',
+                'pemilik_alamat' => 'nullable|string|max:100',
+            ]);
+
+            if (Schema::hasTable('pemilik')) {
+                DB::table('pemilik')->insert([
+                    'no_wa' => $pemilikValidated['pemilik_no_wa'] ?? null,
+                    'alamat' => $pemilikValidated['pemilik_alamat'] ?? null,
+                    'iduser' => $userId,
+                ]);
+            }
+        }
+
+        // If Dokter role selected, store dokter extra data into `dokter` table if table exists
+        $dokterRoleIds = $roleNames->filter(function($name){ return strtolower($name) === 'dokter'; })->keys();
+        if ($dokterRoleIds->isNotEmpty()) {
+            // validate dokter fields
+            $dokterValidated = $request->validate([
+                'dokter_alamat' => 'nullable|string|max:100',
+                'dokter_no_hp' => 'nullable|string|max:45',
+                'dokter_bidang_dokter' => 'nullable|string|max:100',
+                'dokter_jenis_kelamin' => 'nullable|in:L,P',
+            ]);
+
+            if (Schema::hasTable('dokter')) {
+                DB::table('dokter')->insert([
+                    'alamat' => $dokterValidated['dokter_alamat'] ?? null,
+                    'no_hp' => $dokterValidated['dokter_no_hp'] ?? null,
+                    'bidang_dokter' => $dokterValidated['dokter_bidang_dokter'] ?? null,
+                    'jenis_kelamin' => $dokterValidated['dokter_jenis_kelamin'] ?? null,
+                    'id_user' => $userId,
+                ]);
+            }
+        }
+
+        // If Perawat role selected, store perawat extra data into `perawat` table if table exists
+        $perawatRoleIds = $roleNames->filter(function($name){ return strtolower($name) === 'perawat'; })->keys();
+        if ($perawatRoleIds->isNotEmpty()) {
+            // validate perawat fields
+            $perawatValidated = $request->validate([
+                'perawat_alamat' => 'nullable|string|max:100',
+                'perawat_no_hp' => 'nullable|string|max:45',
+                'perawat_jenis_kelamin' => 'nullable|in:L,P',
+                'perawat_pendidikan' => 'nullable|string|max:100',
+            ]);
+
+            if (Schema::hasTable('perawat')) {
+                DB::table('perawat')->insert([
+                    'alamat' => $perawatValidated['perawat_alamat'] ?? null,
+                    'no_hp' => $perawatValidated['perawat_no_hp'] ?? null,
+                    'jenis_kelamin' => $perawatValidated['perawat_jenis_kelamin'] ?? null,
+                    'pendidikan' => $perawatValidated['perawat_pendidikan'] ?? null,
+                    'id_user' => $userId,
+                ]);
+            }
+        }
+
         return redirect()->route('admin.datauser.index')->with('success', 'User berhasil ditambahkan.');
     }
 
     public function show($id)
     {
+        // Optionally, you can implement a show view here. For now, just redirect as before.
         return redirect()->route('admin.datauser.index')->with('info', 'Show not implemented yet.');
     }
 
     public function edit($id)
     {
-        return redirect()->route('admin.datauser.index')->with('info', 'Edit form not implemented yet.');
+        // Option B: Implement a placeholder edit form view
+        $user = DB::table('user')->where('iduser', $id)->first();
+        if (!$user) {
+            abort(404);
+        }
+        $roles = DB::table('role')->get();
+        $userRoles = DB::table('role_user')->where('iduser', $id)->pluck('idrole')->toArray();
+        // Optionally, fetch extra data for pemilik/dokter/perawat if needed
+        return view('admin.datauser.edit', compact('user', 'roles', 'userRoles'));
     }
 
     public function update(Request $request, $id)
     {
-        return redirect()->route('admin.datauser.index')->with('info', 'Update not implemented yet.');
+        $user = DB::table('user')->where('iduser', $id)->first();
+        if (!$user) {
+            abort(404);
+        }
+
+        $validatedData = $request->validate([
+            'nama' => 'required|string|max:255|min:3',
+            'email' => 'required|email|unique:user,email,' . $id . ',iduser',
+            'password' => 'nullable|string|min:8|confirmed',
+            'roles' => 'required|array|min:1',
+            'roles.*' => 'exists:role,idrole',
+        ]);
+
+        $validatedData['nama'] = normalize_name($validatedData['nama']);
+
+        $updateData = [
+            'nama' => $validatedData['nama'],
+            'email' => $validatedData['email'],
+        ];
+
+        if (!empty($validatedData['password'])) {
+            $updateData['password'] = bcrypt($validatedData['password']);
+        }
+
+        DB::table('user')->where('iduser', $id)->update($updateData);
+
+        // Update roles: deactivate old roles, activate new ones
+        DB::table('role_user')->where('iduser', $id)->update(['status' => 0]);
+
+        foreach ($validatedData['roles'] as $roleId) {
+            DB::table('role_user')->updateOrInsert(
+                ['iduser' => $id, 'idrole' => $roleId],
+                ['status' => 1]
+            );
+        }
+
+        // Map selected role ids to role names so we can react to role choices
+        $roleNames = DB::table('role')->whereIn('idrole', $validatedData['roles'])->pluck('nama_role', 'idrole');
+
+        // If Pemilik role selected, update or insert pemilik data
+        $pemilikRoleIds = $roleNames->filter(function($name){ return strtolower($name) === 'pemilik'; })->keys();
+        if ($pemilikRoleIds->isNotEmpty()) {
+            $pemilikValidated = $request->validate([
+                'pemilik_no_wa' => 'nullable|string|max:45',
+                'pemilik_alamat' => 'nullable|string|max:100',
+            ]);
+
+            if (Schema::hasTable('pemilik')) {
+                DB::table('pemilik')->updateOrInsert(
+                    ['iduser' => $id],
+                    [
+                        'no_wa' => $pemilikValidated['pemilik_no_wa'] ?? null,
+                        'alamat' => $pemilikValidated['pemilik_alamat'] ?? null,
+                    ]
+                );
+            }
+        } else {
+            // If pemilik role not selected, remove pemilik data if exists
+            DB::table('pemilik')->where('iduser', $id)->delete();
+        }
+
+        // If Dokter role selected, update or insert dokter data
+        $dokterRoleIds = $roleNames->filter(function($name){ return strtolower($name) === 'dokter'; })->keys();
+        if ($dokterRoleIds->isNotEmpty()) {
+            $dokterValidated = $request->validate([
+                'dokter_alamat' => 'nullable|string|max:100',
+                'dokter_no_hp' => 'nullable|string|max:45',
+                'dokter_bidang_dokter' => 'nullable|string|max:100',
+                'dokter_jenis_kelamin' => 'nullable|in:L,P',
+            ]);
+
+            if (Schema::hasTable('dokter')) {
+                DB::table('dokter')->updateOrInsert(
+                    ['id_user' => $id],
+                    [
+                        'alamat' => $dokterValidated['dokter_alamat'] ?? null,
+                        'no_hp' => $dokterValidated['dokter_no_hp'] ?? null,
+                        'bidang_dokter' => $dokterValidated['dokter_bidang_dokter'] ?? null,
+                        'jenis_kelamin' => $dokterValidated['dokter_jenis_kelamin'] ?? null,
+                    ]
+                );
+            }
+        } else {
+            // If dokter role not selected, remove dokter data if exists
+            DB::table('dokter')->where('id_user', $id)->delete();
+        }
+
+        // If Perawat role selected, update or insert perawat data
+        $perawatRoleIds = $roleNames->filter(function($name){ return strtolower($name) === 'perawat'; })->keys();
+        if ($perawatRoleIds->isNotEmpty()) {
+            $perawatValidated = $request->validate([
+                'perawat_alamat' => 'nullable|string|max:100',
+                'perawat_no_hp' => 'nullable|string|max:45',
+                'perawat_jenis_kelamin' => 'nullable|in:L,P',
+                'perawat_pendidikan' => 'nullable|string|max:100',
+            ]);
+
+            if (Schema::hasTable('perawat')) {
+                DB::table('perawat')->updateOrInsert(
+                    ['id_user' => $id],
+                    [
+                        'alamat' => $perawatValidated['perawat_alamat'] ?? null,
+                        'no_hp' => $perawatValidated['perawat_no_hp'] ?? null,
+                        'jenis_kelamin' => $perawatValidated['perawat_jenis_kelamin'] ?? null,
+                        'pendidikan' => $perawatValidated['perawat_pendidikan'] ?? null,
+                    ]
+                );
+            }
+        } else {
+            // If perawat role not selected, remove perawat data if exists
+            DB::table('perawat')->where('id_user', $id)->delete();
+        }
+
+        return redirect()->route('admin.datauser.index')->with('success', 'User berhasil diperbarui.');
     }
 
     public function destroy($id)

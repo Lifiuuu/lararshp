@@ -14,18 +14,19 @@
                 <th class="py-2 px-4 border-b">Nama</th>
                 <th class="py-2 px-4 border-b">No WA</th>
                 <th class="py-2 px-4 border-b">Alamat</th>
+                <th class="py-2 px-4 border-b">Aksi</th>
             </tr>
         </thead>
         <tbody>
             @foreach($pemiliks as $index => $pemilik)
             <tr>
                 <td class="py-2 px-4 border-b text-center">{{ $index + 1 }}</td>
-                <td class="py-2 px-4 border-b">{{ $pemilik->user->nama ?? 'N/A' }}</td>
-                <td class="py-2 px-4 border-b">{{ $pemilik->no_wa }}</td>
-                <td class="py-2 px-4 border-b">{{ $pemilik->alamat }}</td>
+                <td class="py-2 px-4 border-b">{{ $pemilik->nama_user ?? 'N/A' }}</td>
+                <td class="py-2 px-4 border-b">{{ $pemilik->no_wa ?? '' }}</td>
+                <td class="py-2 px-4 border-b">{{ $pemilik->alamat ?? '' }}</td>
                 <td class="actions">
-                    <a href="{{ route('admin.datapemilik.edit', $pemilik->id ?? $pemilik->idpemilik) }}" class="btn-admin ghost">Edit</a>
-                    <form action="{{ route('admin.datapemilik.destroy', $pemilik->id ?? $pemilik->idpemilik) }}" method="POST" style="display:inline-block" onsubmit="return confirm('Hapus pemilik ini?')">
+                    <a href="{{ route('admin.datapemilik.edit', $pemilik->idpemilik) }}" class="btn-admin ghost">Edit</a>
+                    <form action="{{ route('admin.datapemilik.destroy', $pemilik->idpemilik) }}" method="POST" style="display:inline-block" onsubmit="return confirm('Hapus pemilik ini?')">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn-admin warn">Hapus</button>

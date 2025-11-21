@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\resepsionis;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -17,7 +17,7 @@ class TemudokterController extends Controller
             ->select('t.*', 'p.nama as pet_nama', 'u.nama as pemilik_nama')
             ->get();
 
-        return view('resepsionis.temudokter.index', compact('temudokters'));
+        return view('admin.temudokter.index', compact('temudokters'));
     }
 
     public function create()
@@ -30,7 +30,7 @@ class TemudokterController extends Controller
             ->select('role_user.*', 'user.nama as user_nama')
             ->get();
 
-        return view('resepsionis.temudokter.create', compact('pets', 'pemilikRoleUsers'));
+        return view('admin.temudokter.create', compact('pets', 'pemilikRoleUsers'));
     }
 
     public function store(Request $request)
@@ -45,7 +45,7 @@ class TemudokterController extends Controller
 
         DB::table('temu_dokter')->insert($validated);
 
-        return redirect()->route('resepsionis.temudokter.index')->with('success', 'Temu dokter dibuat.');
+        return redirect()->route('admin.temudokter.index')->with('success', 'Temu dokter dibuat.');
     }
 
     public function edit($id)
@@ -61,7 +61,7 @@ class TemudokterController extends Controller
             ->select('role_user.*', 'user.nama as user_nama')
             ->get();
 
-        return view('resepsionis.temudokter.edit', compact('temu', 'pets', 'pemilikRoleUsers'));
+        return view('admin.temudokter.edit', compact('temu', 'pets', 'pemilikRoleUsers'));
     }
 
     public function update(Request $request, $id)
@@ -79,7 +79,7 @@ class TemudokterController extends Controller
 
         DB::table('temu_dokter')->where('idreservasi_dokter', $id)->update($validated);
 
-        return redirect()->route('resepsionis.temudokter.index')->with('success', 'Temu dokter diperbarui.');
+        return redirect()->route('admin.temudokter.index')->with('success', 'Temu dokter diperbarui.');
     }
 
     public function destroy($id)
@@ -87,6 +87,6 @@ class TemudokterController extends Controller
         $exists = DB::table('temu_dokter')->where('idreservasi_dokter', $id)->first();
         if (!$exists) abort(404);
         DB::table('temu_dokter')->where('idreservasi_dokter', $id)->delete();
-        return redirect()->route('resepsionis.temudokter.index')->with('success', 'Temu dokter dihapus.');
+        return redirect()->route('admin.temudokter.index')->with('success', 'Temu dokter dihapus.');
     }
 }

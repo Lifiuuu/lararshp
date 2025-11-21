@@ -10,7 +10,6 @@
         <table class="admin-table table-sm">
         <thead>
             <tr class="bg-gray-200">
-                <th class="py-2 px-4 border-b">No</th>
                 <th class="py-2 px-4 border-b">Kode</th>
                 <th class="py-2 px-4 border-b">Deskripsi Tindakan Terapi</th>
                 <th class="py-2 px-4 border-b">Kategori</th>
@@ -31,7 +30,6 @@
                 @foreach($list as $t)
                     @php $rowNumber++; @endphp
                     <tr>
-                        <td class="py-2 px-4 border-b text-center">{{ $rowNumber }}</td>
                         <td class="py-2 px-4 border-b">{{ $t->kode }}</td>
                         <td class="py-2 px-4 border-b">{{ $t->deskripsi_tindakan_terapi }}</td>
 

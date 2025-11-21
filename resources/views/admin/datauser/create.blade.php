@@ -98,7 +98,95 @@
                                     </div>
                                 @enderror
                             </div>
+                            </div>
 
+                            <!-- Role-specific sections -->
+                            <div id="role-sections" class="mt-3">
+                                <!-- Pemilik fields -->
+                                <div id="section-pemilik" style="display:none;" class="card card-body mb-3">
+                                    <h5>Pemilik — Informasi Tambahan</h5>
+                                    <div class="form-group">
+                                        <label for="pemilik_no_wa">No WA</label>
+                                        <input type="text" class="form-control" id="pemilik_no_wa" name="pemilik_no_wa" value="{{ old('pemilik_no_wa') }}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="pemilik_alamat">Alamat</label>
+                                        <input type="text" class="form-control" id="pemilik_alamat" name="pemilik_alamat" value="{{ old('pemilik_alamat') }}">
+                                    </div>
+                                </div>
+
+                                <!-- Dokter fields -->
+                                <div id="section-dokter" style="display:none;" class="card card-body mb-3">
+                                    <h5>Dokter — Informasi Tambahan</h5>
+                                    <div class="form-group">
+                                        <label for="dokter_alamat">Alamat</label>
+                                        <input type="text" class="form-control" id="dokter_alamat" name="dokter_alamat" value="{{ old('dokter_alamat') }}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="dokter_no_hp">No HP</label>
+                                        <input type="text" class="form-control" id="dokter_no_hp" name="dokter_no_hp" value="{{ old('dokter_no_hp') }}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="dokter_bidang_dokter">Bidang Dokter</label>
+                                        <input type="text" class="form-control" id="dokter_bidang_dokter" name="dokter_bidang_dokter" value="{{ old('dokter_bidang_dokter') }}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="dokter_jenis_kelamin">Jenis Kelamin</label>
+                                        <select class="form-control" id="dokter_jenis_kelamin" name="dokter_jenis_kelamin">
+                                            <option value="">Pilih</option>
+                                            <option value="L" {{ old('dokter_jenis_kelamin') == 'L' ? 'selected' : '' }}>Laki-laki</option>
+                                            <option value="P" {{ old('dokter_jenis_kelamin') == 'P' ? 'selected' : '' }}>Perempuan</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Perawat fields -->
+                                <div id="section-perawat" style="display:none;" class="card card-body mb-3">
+                                    <h5>Perawat — Informasi Tambahan</h5>
+                                    <div class="form-group">
+                                        <label for="perawat_alamat">Alamat</label>
+                                        <input type="text" class="form-control" id="perawat_alamat" name="perawat_alamat" value="{{ old('perawat_alamat') }}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="perawat_no_hp">No HP</label>
+                                        <input type="text" class="form-control" id="perawat_no_hp" name="perawat_no_hp" value="{{ old('perawat_no_hp') }}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="perawat_jenis_kelamin">Jenis Kelamin</label>
+                                        <select class="form-control" id="perawat_jenis_kelamin" name="perawat_jenis_kelamin">
+                                            <option value="">Pilih</option>
+                                            <option value="L" {{ old('perawat_jenis_kelamin') == 'L' ? 'selected' : '' }}>Laki-laki</option>
+                                            <option value="P" {{ old('perawat_jenis_kelamin') == 'P' ? 'selected' : '' }}>Perempuan</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="perawat_pendidikan">Pendidikan</label>
+                                        <input type="text" class="form-control" id="perawat_pendidikan" name="perawat_pendidikan" value="{{ old('perawat_pendidikan') }}">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <script>
+                                (function(){
+                                    const rolesSelect = document.getElementById('roles');
+                                    const sectionPemilik = document.getElementById('section-pemilik');
+                                    const sectionDokter = document.getElementById('section-dokter');
+                                    const sectionPerawat = document.getElementById('section-perawat');
+
+                                    function updateSections(){
+                                        const selected = Array.from(rolesSelect.options).filter(o=>o.selected).map(o=>o.text.trim().toLowerCase());
+                                        sectionPemilik.style.display = selected.includes('pemilik') ? 'block' : 'none';
+                                        sectionDokter.style.display = selected.includes('dokter') ? 'block' : 'none';
+                                        sectionPerawat.style.display = selected.includes('perawat') ? 'block' : 'none';
+                                    }
+
+                                    rolesSelect.addEventListener('change', updateSections);
+                                    // run once on load to preserve old values
+                                    document.addEventListener('DOMContentLoaded', updateSections);
+                                    // In case the Blade renders before DOMContentLoaded
+                                    updateSections();
+                                })();
+                            </script>
                             <div class="mt-3">
                                 <button type="submit" class="btn btn-primary">Simpan</button>
                                 <a href="{{ route('admin.datauser.index') }}" class="btn btn-secondary">Batal</a>
