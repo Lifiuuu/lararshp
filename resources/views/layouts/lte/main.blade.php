@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   @include('layouts.lte.head')
-  <title>@yield('title', 'Dashboard') - RSH Panel</title>
+  <title>@yield('title', 'Dashboard') - RSHP Panel</title>
 </head>
 <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
   <!--begin::App Wrapper-->

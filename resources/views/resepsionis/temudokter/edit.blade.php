@@ -1,42 +1,39 @@
 @extends('layouts.lte.main')
 
+@section('page-title', 'Edit Status Temu Dokter')
+
+@section('breadcrumb')
+<li class="breadcrumb-item"><a href="{{ route('resepsionis.dashboard') }}">Dashboard</a></li>
+<li class="breadcrumb-item"><a href="{{ route('resepsionis.temudokter.index') }}">Temu Dokter</a></li>
+<li class="breadcrumb-item active">Edit Status</li>
+@endsection
+
 @section('content')
-    <h1>Edit Temu Dokter #{{ $temu->idreservasi_dokter }}</h1>
-
-    <form method="POST" action="{{ route('resepsionis.temudokter.update', $temu->idreservasi_dokter) }}">
-        @csrf
-        @method('PUT')
-        <div>
-            <label for="no_urut">No Urut</label>
-            <input name="no_urut" value="{{ old('no_urut', $temu->no_urut) }}">
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Edit Status Temu Dokter</h5>
+                </div>
+                <div class="card-body">
+                    <form action="{{ route('resepsionis.temudokter.update', $temu->idreservasi_dokter) }}" method="POST">
+                        @csrf
+                        @method('PUT')
+                        <div class="mb-3">
+                            <label for="status" class="form-label">Status</label>
+                            <select name="status" id="status" class="form-select" required>
+                                <option value="P" {{ $temu->status == 'P' ? 'selected' : '' }}>Pending</option>
+                                <option value="D" {{ $temu->status == 'D' ? 'selected' : '' }}>Selesai</option>
+                                <option value="C" {{ $temu->status == 'C' ? 'selected' : '' }}>Batal</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                        <a href="{{ route('resepsionis.temudokter.index') }}" class="btn btn-secondary">Kembali</a>
+                    </form>
+                </div>
+            </div>
         </div>
-        <div>
-            <label for="waktu_daftar">Waktu Daftar</label>
-            <input name="waktu_daftar" value="{{ old('waktu_daftar', $temu->waktu_daftar) }}">
-        </div>
-        <div>
-            <label for="status">Status</label>
-            <input name="status" value="{{ old('status', $temu->status) }}">
-        </div>
-        <div>
-            <label for="idpet">Pet</label>
-            <select name="idpet">
-                @foreach($pets as $p)
-                    <option value="{{ $p->idpet }}" @if($temu->idpet == $p->idpet) selected @endif>{{ $p->nama }}</option>
-                @endforeach
-            </select>
-        </div>
-        <div>
-            <label for="idrole_user">Role User (pemilik)</label>
-            <select name="idrole_user">
-                @foreach($pemilikRoleUsers as $ru)
-                    <option value="{{ $ru->idrole_user }}" @if($temu->idrole_user == $ru->idrole_user) selected @endif>{{ $ru->user_nama ?? $ru->iduser }}</option>
-                @endforeach
-            </select>
-        </div>
-
-        <button type="submit">Perbarui</button>
-    </form>
-
-    <p><a href="{{ route('resepsionis.temudokter.index') }}">Kembali</a></p>
+    </div>
+</div>
 @endsection

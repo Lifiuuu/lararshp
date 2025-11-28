@@ -1,36 +1,64 @@
 @extends('layouts.lte.main')
 
+@section('page-title', 'Dashboard Dokter')
+
+@section('breadcrumb')
+<li class="breadcrumb-item active">Dashboard</li>
+@endsection
+
 @section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
+<div class="container-fluid p-3">
+    <div class="row mb-3">
+        <div class="col-lg-3 col-6">
+            <div class="small-box text-bg-primary">
+                <div class="inner">
+                    <h3>{{ $stats['rekam_medis'] ?? 0 }}</h3>
+                    <p>Rekam Medis</p>
+                </div>
+                <div class="icon"><i class="bi bi-file-medical"></i></div>
+                <a href="{{ route('dokter.datarekammedis.index') }}" class="small-box-footer">More info <i class="bi bi-arrow-right"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
             <div class="card">
-                <div class="card-header">{{ __('Dashboard') }} - {{ session('user_name') }}</div>
+                <div class="card-header">Recent Rekam Medis</div>
+                <div class="card-body table-responsive">
+                    <table class="table table-striped table-sm">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Pet</th>
+                                <th>Waktu Daftar</th>
+                                <th>Anamnesa</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($recentRekamMediss as $i => $r)
+                                <tr>
+                                    <td>{{ $i + 1 }}</td>
+                                    <td>{{ $r->nama_pet ?? '-' }}</td>
+                                    <td>{{ optional(\Carbon\Carbon::parse($r->waktu_daftar ?? $r->created_at ?? null))->format('Y-m-d H:i') ?? '-' }}</td>
+                                    <td title="{{ $r->anamnesa ?? '-' }}">{{ Str::limit($r->anamnesa ?? '-', 20) }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="text-center">No recent rekam medis.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
 
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">Quick Links</div>
                 <div class="card-body">
-                    @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                    @endif
-
-                    {{ __('You are logged in!') }}
-
-                    <div class="row mt-4">
-                        @if(session('user_role') == 2)
-                            <h4>Data Rekam Medis & Tindakan</h4>
-                            <div class="col-md-6 mb-2">
-                                <a href="{{ route('dokter.datarekammedis.index') }}" class="btn btn-secondary btn-block">
-                                    <i class="fas fa-file-medical"></i> Rekam Medis ({{ count($data['rekamMediss']) }})
-                                </a>
-                            </div>
-                            <div class="col-md-6 mb-2">
-                                <a href="{{ route('dokter.datatindakan.index') }}" class="btn btn-info btn-block">
-                                    <i class="fas fa-procedures"></i> Tindakan ({{ count($data['tindakans']) }})
-                                </a>
-                            </div>
-                        @endif
-                    </div>
+                    <a href="{{ route('dokter.datarekammedis.index') }}" class="btn btn-sm btn-primary mb-2">Rekam Medis</a>
                 </div>
             </div>
         </div>

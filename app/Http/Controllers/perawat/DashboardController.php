@@ -22,6 +22,7 @@ class DashboardController extends Controller
             ->leftJoin('role_user as ru_doc', 'r.dokter_pemeriksa', '=', 'ru_doc.idrole_user')
             ->leftJoin('user as u_doc', 'ru_doc.iduser', '=', 'u_doc.iduser')
             ->select('r.*', 't.no_urut', 't.waktu_daftar', 'p.nama as nama_pet', 'u_doc.nama as nama_dokter', 'u_owner.nama as nama_pemilik')
+            ->where('t.status', '!=', 'D')
             ->get();
 
         $tindakans = DB::table('kode_tindakan_terapi as k')
@@ -35,7 +36,10 @@ class DashboardController extends Controller
         // Summary stats
         $stats = [
             'patients' => DB::table('pet')->count(),
-            'rekam_medis' => DB::table('rekam_medis')->count(),
+            'rekam_medis' => DB::table('rekam_medis as r')
+                ->join('temu_dokter as t', 'r.idreservasi_dokter', '=', 't.idreservasi_dokter')
+                ->where('t.status', '!=', 'D')
+                ->count(),
         ];
 
         // Monthly visits for last 6 months (based on temu_dokter.waktu_daftar)

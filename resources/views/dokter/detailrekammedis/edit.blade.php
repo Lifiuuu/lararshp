@@ -1,35 +1,41 @@
-<!doctype html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <title>Edit Detail Rekam Medis</title>
-</head>
 @extends('layouts.lte.main')
 
-@section('content')
-    <h1>Edit Detail Rekam Medis #{{ $detail->iddetail_rekam_medis }}</h1>
+@section('page-title', 'Edit Detail Rekam Medis')
 
-    <form method="POST" action="{{ route('dokter.detailrekammedis.update', $detail->iddetail_rekam_medis) }}">
-        @csrf
-        @method('PUT')
-
-        <div>
-            <label for="idkode_tindakan_terapi">Tindakan</label>
-            <select name="idkode_tindakan_terapi" id="idkode_tindakan_terapi">
-                @foreach($tindakans as $t)
-                    <option value="{{ $t->idkode_tindakan_terapi }}" @if($detail->idkode_tindakan_terapi == $t->idkode_tindakan_terapi) selected @endif>{{ $t->kode }} - {{ $t->deskripsi_tindakan_terapi }}</option>
-                @endforeach
-            </select>
-        </div>
-
-        <div>
-            <label for="detail">Detail</label>
-            <textarea name="detail" id="detail">{{ old('detail', $detail->detail) }}</textarea>
-        </div>
-
-        <button type="submit">Perbarui</button>
-    </form>
-
-    <p><a href="{{ route('dokter.datarekammedis.index') }}">Kembali ke daftar rekam medis</a></p>
+@section('breadcrumb')
+<li class="breadcrumb-item"><a href="{{ route('dokter.dashboard') }}">Dashboard</a></li>
+<li class="breadcrumb-item"><a href="{{ route('dokter.datarekammedis.index') }}">Data Rekam Medis</a></li>
+<li class="breadcrumb-item"><a href="{{ route('dokter.detailrekammedis.index') }}">Detail Rekam Medis</a></li>
+<li class="breadcrumb-item active">Edit Detail Rekam Medis</li>
 @endsection
-</html>
+
+@section('content')
+<div class="container-fluid p-3">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Edit Detail Rekam Medis ID: {{ $detail->iddetail_rekam_medis }}</h5>
+                </div>
+                <div class="card-body">
+                    <form action="{{ route('dokter.detailrekammedis.update', $detail->iddetail_rekam_medis) }}" method="POST">
+                        @csrf
+                        @method('PUT')
+                        <div class="mb-3">
+                            <label class="form-label">Kode Tindakan Terapi</label>
+                            <input type="text" class="form-control" value="{{ $detail->kode }} - {{ $detail->deskripsi_tindakan_terapi }}" readonly>
+                            <input type="hidden" name="idkode_tindakan_terapi" value="{{ $detail->idkode_tindakan_terapi }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="detail" class="form-label">Detail</label>
+                            <textarea name="detail" id="detail" class="form-control" rows="4" required>{{ $detail->detail }}</textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update</button>
+                        <a href="{{ route('dokter.detailrekammedis.index') }}" class="btn btn-secondary">Batal</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection

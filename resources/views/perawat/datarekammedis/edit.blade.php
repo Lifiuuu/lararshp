@@ -1,38 +1,48 @@
 @extends('layouts.lte.main')
 
+@section('page-title', 'Edit Rekam Medis')
+
+@section('breadcrumb')
+<li class="breadcrumb-item"><a href="{{ route('perawat.dashboard') }}">Dashboard</a></li>
+<li class="breadcrumb-item"><a href="{{ route('perawat.datarekammedis.index') }}">Data Rekam Medis</a></li>
+<li class="breadcrumb-item active">Edit</li>
+@endsection
+
 @section('content')
-    <h1>Edit Rekam Medis #{{ $rekam->idrekam_medis }}</h1>
-
-    <form method="POST" action="{{ route('perawat.datarekammedis.update', $rekam->idrekam_medis) }}">
-        @csrf
-        @method('PUT')
-
-        <div>
-            <label for="dokter_pemeriksa">Dokter</label>
-            <select name="dokter_pemeriksa">
-                @foreach($dokters as $d)
-                    <option value="{{ $d->idrole_user }}" @if($rekam->dokter_pemeriksa == $d->idrole_user) selected @endif>{{ $d->nama_user }}</option>
-                @endforeach
-            </select>
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header">
+            <h5>Edit Rekam Medis #{{ $rekam->idrekam_medis }}</h5>
         </div>
+        <div class="card-body">
+            <form method="POST" action="{{ route('perawat.datarekammedis.update', $rekam->idrekam_medis) }}">
+                @csrf
+                @method('PUT')
 
-        <div>
-            <label for="anamnesa">Anamnesa</label>
-            <textarea name="anamnesa">{{ old('anamnesa', $rekam->anamnesa) }}</textarea>
+                <div class="mb-3">
+                    <label for="dokter_pemeriksa" class="form-label">Dokter Pemeriksa</label>
+                    <input type="text" class="form-control" value="{{ $dokter->nama_dokter ?? '-' }}" readonly>
+                </div>
+
+                <div class="mb-3">
+                    <label for="anamnesa" class="form-label">Anamnesa</label>
+                    <textarea name="anamnesa" id="anamnesa" class="form-control" rows="3" required>{{ old('anamnesa', $rekam->anamnesa) }}</textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label for="temuan_klinis" class="form-label">Temuan Klinis</label>
+                    <textarea name="temuan_klinis" id="temuan_klinis" class="form-control" rows="3" required>{{ old('temuan_klinis', $rekam->temuan_klinis) }}</textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label for="diagnosa" class="form-label">Diagnosa</label>
+                    <textarea name="diagnosa" id="diagnosa" class="form-control" rows="3" required>{{ old('diagnosa', $rekam->diagnosa) }}</textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Perbarui</button>
+                <a href="{{ route('perawat.datarekammedis.index') }}" class="btn btn-secondary">Kembali</a>
+            </form>
         </div>
-
-        <div>
-            <label for="temuan_klinis">Temuan Klinis</label>
-            <textarea name="temuan_klinis">{{ old('temuan_klinis', $rekam->temuan_klinis) }}</textarea>
-        </div>
-
-        <div>
-            <label for="diagnosa">Diagnosa</label>
-            <textarea name="diagnosa">{{ old('diagnosa', $rekam->diagnosa) }}</textarea>
-        </div>
-
-        <button type="submit">Perbarui</button>
-    </form>
-
-    <p><a href="{{ route('perawat.datarekammedis.index') }}">Kembali ke daftar</a></p>
+    </div>
+</div>
 @endsection

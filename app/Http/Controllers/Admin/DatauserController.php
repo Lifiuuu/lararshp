@@ -19,8 +19,13 @@ class DatauserController extends Controller
         // Use query builder to fetch user rows joined with role rows (may create multiple rows per user
         // when users have multiple roles). We normalize the result into one object per user and
         // attach a `roles` collection so views that expect `$user->roles` continue to work.
+        // Only join active role_user rows (status = 1) so inactive role assignments
+        // don't appear in the user's role list after updates.
         $rawRows = DB::table('user')
-            ->leftJoin('role_user', 'user.iduser', '=', 'role_user.iduser')
+            ->leftJoin('role_user', function ($join) {
+                $join->on('user.iduser', '=', 'role_user.iduser')
+                     ->where('role_user.status', '=', 1);
+            })
             ->leftJoin('role', 'role_user.idrole', '=', 'role.idrole')
             ->leftJoin('pemilik', 'user.iduser', '=', 'pemilik.iduser')
             ->select('user.*', 'role.nama_role', 'user.nama as nama_pemilik', 'pemilik.no_wa as pemilik_no_wa')
@@ -79,7 +84,7 @@ class DatauserController extends Controller
             DB::table('role_user')->insert([
                 'iduser' => $userId,
                 'idrole' => $roleId,
-                'status' => 'active',
+                'status' => 1,
             ]);
         }
 
@@ -198,8 +203,10 @@ class DatauserController extends Controller
 
         DB::table('user')->where('iduser', $id)->update($updateData);
 
-        // Update roles: deactivate old roles, activate new ones
-        DB::table('role_user')->where('iduser', $id)->update(['status' => 0]);
+        // Update roles: remove role_user rows that were unselected, and ensure selected roles exist
+        DB::table('role_user')->where('iduser', $id)
+            ->whereNotIn('idrole', $validatedData['roles'])
+            ->delete();
 
         foreach ($validatedData['roles'] as $roleId) {
             DB::table('role_user')->updateOrInsert(

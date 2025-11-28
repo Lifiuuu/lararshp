@@ -1,62 +1,68 @@
 @extends('layouts.lte.main')
 
+@section('page-title', 'Data Pet')
+
 @section('content')
 <section class="container mx-auto p-4">
-    <h1 class="text-2xl font-bold mb-4">Daftar Data Pet</h1>
-    <div style="text-align:right; padding-bottom:10px;">
-        <a href="{{ route('admin.datapet.create') }}" class="btn-admin primary" style="text-align:left">Tambah Data Pet</a>
+    <div class="d-flex justify-content-start mb-3">
+        <a href="{{ route('admin.datapet.create') }}" class="btn btn-primary">Tambah Data Pet</a>
     </div>
-    <div class="table-responsive">
-        <table class="admin-table table-sm">
-        <thead>
-            <tr class="bg-gray-200">
-                <th class="py-2 px-4 border-b">No</th>
-                <th class="py-2 px-4 border-b">Nama</th>
-                <th class="py-2 px-4 border-b">Tanggal Lahir</th>
-                <th class="py-2 px-4 border-b">Warna Tanda</th>
-                <th class="py-2 px-4 border-b">Jenis Kelamin</th>
-                <th class="py-2 px-4 border-b">Pemilik</th>
-                <th class="py-2 px-4 border-b">Ras Hewan</th>
-            </tr>
-        </thead>
-        <tbody>
-            @php
-                // Group pets by owner name (controller provides flat fields `nama_pemilik` and `pemilik_no_wa`)
-                $groups = $pets->groupBy(function($p) {
-                    return $p->nama_pemilik ?? $p->pemilik_no_wa ?? 'N/A';
-                });
-                $rowNumber = 0;
-            @endphp
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+                    <thead class="table-dark">
+                        <tr>
+                            <th class="text-center">No</th>
+                            <th>Nama</th>
+                            <th>Tanggal Lahir</th>
+                            <th>Warna Tanda</th>
+                            <th>Jenis Kelamin</th>
+                            <th>Pemilik</th>
+                            <th>Ras Hewan</th>
+                            <th class="text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @php
+                            // Group pets by owner name (controller provides flat fields `nama_pemilik` and `pemilik_no_wa`)
+                            $groups = $pets->groupBy(function($p) {
+                                return $p->nama_pemilik ?? $p->pemilik_no_wa ?? 'N/A';
+                            });
+                            $rowNumber = 0;
+                        @endphp
 
-            @foreach($groups as $pemilikName => $petList)
-                @php $count = $petList->count(); @endphp
-                @foreach($petList as $pet)
-                    @php $rowNumber++; @endphp
-                    <tr>
-                        <td class="py-2 px-4 border-b text-center">{{ $rowNumber }}</td>
-                        <td class="py-2 px-4 border-b">{{ $pet->nama }}</td>
-                        <td class="py-2 px-4 border-b">{{ $pet->tanggal_lahir }}</td>
-                        <td class="py-2 px-4 border-b">{{ $pet->warna_tanda }}</td>
-                        <td class="py-2 px-4 border-b">{{ $pet->jenis_kelamin }}</td>
+                        @foreach($groups as $pemilikName => $petList)
+                            @php $count = $petList->count(); @endphp
+                            @foreach($petList as $pet)
+                                @php $rowNumber++; @endphp
+                                <tr>
+                                    <td class="text-center">{{ $rowNumber }}</td>
+                                    <td>{{ $pet->nama }}</td>
+                                    <td>{{ $pet->tanggal_lahir }}</td>
+                                    <td>{{ $pet->warna_tanda }}</td>
+                                    <td>{{ $pet->jenis_kelamin }}</td>
 
-                        @if($loop->first)
-                            <td class="py-2 px-4 border-b" rowspan="{{ $count }}">{{ $pemilikName }}</td>
-                        @endif
+                                    @if($loop->first)
+                                        <td rowspan="{{ $count }}">{{ $pemilikName }}</td>
+                                    @endif
 
-                        <td class="py-2 px-4 border-b">{{ $pet->nama_ras ?? 'N/A' }}</td>
-                        <td class="actions">
-                            <a href="{{ route('admin.datapet.edit', $pet->id ?? $pet->idpet) }}" class="btn-admin ghost">Edit</a>
-                            <form action="{{ route('admin.datapet.destroy', $pet->id ?? $pet->idpet) }}" method="POST" style="display:inline-block" onsubmit="return confirm('Hapus data pet ini?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn-admin warn">Hapus</button>
-                            </form>
-                        </td>
-                    </tr>
-                @endforeach
-            @endforeach
-        </tbody>
-        </table>
+                                    <td>{{ $pet->nama_ras ?? 'N/A' }}</td>
+                                    <td class="text-center actions">
+                                        <a href="{{ route('admin.datapet.edit', $pet->id ?? $pet->idpet) }}" class="btn btn-sm btn-warning me-1 btn-admin sm">Edit</a>
+                                        <form action="{{ route('admin.datapet.destroy', $pet->id ?? $pet->idpet) }}" method="POST" style="display:inline-block" onsubmit="return confirm('Hapus data pet ini?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-danger btn-admin sm">Hapus</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </section>
 @endsection

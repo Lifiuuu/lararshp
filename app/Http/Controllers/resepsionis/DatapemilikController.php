@@ -15,13 +15,13 @@ class DatapemilikController extends Controller
             ->select('pm.*', 'u.nama as user_nama', 'u.email as user_email')
             ->get();
 
-        return view('admin.datapemilik.index', compact('pemiliks'));
+        return view('resepsionis.datapemilik.index', compact('pemiliks'));
     }
 
     public function create()
     {
         $users = DB::table('user')->get();
-        return view('admin.datapemilik.create', compact('users'));
+        return view('resepsionis.datapemilik.create', compact('users'));
     }
 
     public function store(Request $request)
@@ -47,7 +47,7 @@ class DatapemilikController extends Controller
         $pemilik = DB::table('pemilik')->where('idpemilik', $id)->first();
         if (!$pemilik) abort(404);
         $users = DB::table('user')->get();
-        return view('admin.datapemilik.edit', compact('pemilik', 'users'));
+        return view('resepsionis.datapemilik.edit', compact('pemilik', 'users'));
     }
 
     public function update(Request $request, $id)

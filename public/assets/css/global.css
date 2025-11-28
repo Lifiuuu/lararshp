@@ -10,16 +10,26 @@
 /* Di sinilah Anda mengontrol seluruh tema warna dan gaya website. */
 :root {
     --primary-color: #1E3A8A; /* Biru Tua Profesional */
-    --accent-color: #F59E0B;  /* Kuning Emas sebagai Aksen */
-    --background-color: #F8FAFC; /* Abu-abu sangat terang */
+    --primary-light: #3B82F6; /* Biru Sedang */
+    --primary-dark: #1E40AF; /* Biru Lebih Gelap */
+    --accent-color: #60A5FA;  /* Biru Terang sebagai Aksen */
+    --accent-dark: #3B82F6; /* Biru Aksen Gelap */
+    --background-color: #F0F9FF; /* Biru sangat terang untuk background */
     --surface-color: #FFFFFF;
-    --text-color: #334155;     /* Abu-abu gelap untuk teks */
-    --heading-color: #1E293B;  /* Abu-abu lebih gelap untuk judul */
+    --text-color: #1E293B;     /* Abu-abu gelap untuk teks */
+    --heading-color: #0F172A;  /* Abu-abu lebih gelap untuk judul */
+
+    /* Blue Gradient Variables */
+    --gradient-primary: linear-gradient(135deg, #1E3A8A 0%, #3B82F6 50%, #60A5FA 100%);
+    --gradient-accent: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%);
+    --gradient-light: linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%);
+    --gradient-card: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(240,249,255,0.9) 100%);
+    --gradient-sidebar: linear-gradient(180deg, #3B82F6 0%, #60A5FA 50%, #93C5FD 100%);
 
     --font-sans: 'Poppins', sans-serif;
-    --border-radius: 8px;
-    --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    --shadow-hover: 0 8px 20px rgba(0,0,0,0.12);
+    --border-radius: 12px;
+    --shadow: 0 4px 20px rgba(30, 58, 138, 0.1);
+    --shadow-hover: 0 8px 30px rgba(30, 58, 138, 0.15);
 }
 
 /* --- 2. Global Resets & Body Styles --- */
@@ -33,9 +43,11 @@
 body {
     font-family: var(--font-sans);
     color: var(--text-color);
-    background-color: var(--background-color);
+    background: var(--gradient-light);
+    background-attachment: fixed;
     line-height: 1.7;
     overflow-x: hidden; /* Mencegah scroll bar horizontal */
+    min-height: 100vh;
 }
 
 /* --- 3. Typography & Container --- */
@@ -65,35 +77,55 @@ h1, h2, h3, h4, h5, h6 {
     transition: all 0.3s ease;
     display: inline-block;
     border: 2px solid transparent;
+    position: relative;
+    overflow: hidden;
+}
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+.btn:hover::before {
+    left: 100%;
 }
 .btn-primary {
-    background-color: var(--accent-color);
+    background: var(--gradient-primary);
     color: #FFFFFF;
+    box-shadow: var(--shadow);
 }
 .btn-primary:hover {
-    background-color: #D97706; /* Kuning lebih gelap */
+    background: var(--gradient-accent);
     transform: translateY(-3px);
     box-shadow: var(--shadow-hover);
 }
 .btn-secondary {
-    background-color: var(--surface-color);
+    background: var(--gradient-card);
     color: var(--primary-color);
-    border: 2px solid var(--primary-color);
+    border: 2px solid var(--primary-light);
+    backdrop-filter: blur(10px);
 }
 .btn-secondary:hover {
-    background-color: var(--primary-color);
+    background: var(--gradient-primary);
     color: var(--surface-color);
     transform: translateY(-3px);
+    border-color: var(--primary-color);
 }
 
 /* Navbar (Header) */
 .navbar {
-    background-color: var(--surface-color);
+    background: var(--gradient-primary);
     box-shadow: var(--shadow);
     padding: 0.8rem 0; /* Header lebih ramping */
     position: sticky;
     top: 0;
     z-index: 100;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 .navbar .container {
     display: flex;
@@ -103,8 +135,9 @@ h1, h2, h3, h4, h5, h6 {
 .navbar .logo {
     font-size: 1.25rem;
     font-weight: 700;
-    color: var(--primary-color);
+    color: #FFFFFF;
     text-decoration: none;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 .navbar nav ul {
     list-style: none;
@@ -113,10 +146,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 .navbar nav a {
     text-decoration: none;
-    color: var(--text-color);
+    color: rgba(255,255,255,0.9);
     font-weight: 600;
     position: relative;
     padding-bottom: 5px;
+    transition: all 0.3s ease;
+}
+.navbar nav a:hover, .navbar nav a.active {
+    color: #FFFFFF;
 }
 .navbar nav a::after {
     content: '';
@@ -125,7 +162,7 @@ h1, h2, h3, h4, h5, h6 {
     left: 0;
     width: 0;
     height: 2px;
-    background-color: var(--accent-color);
+    background: linear-gradient(90deg, #60A5FA, #FFFFFF);
     transition: width 0.3s ease;
 }
 .navbar nav a:hover::after, .navbar nav a.active::after {
@@ -140,6 +177,8 @@ h1, h2, h3, h4, h5, h6 {
     text-align: center;
     font-size: 2.2rem;
     margin-bottom: 3rem;
+    color: var(--heading-color);
+    text-shadow: 0 2px 4px rgba(30,58,138,0.1);
 }
 .features-grid {
     display: grid;
@@ -147,21 +186,29 @@ h1, h2, h3, h4, h5, h6 {
     gap: 2.5rem;
 }
 .feature-item {
-    background-color: var(--surface-color);
+    background: var(--gradient-card);
     padding: 2.5rem;
     border-radius: var(--border-radius);
     box-shadow: var(--shadow);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    overflow: hidden; /* Memperbaiki masalah bingkai di peta */
+    transition: all 0.3s ease;
+    overflow: hidden;
+    border: 1px solid rgba(59, 130, 246, 0.1);
+    backdrop-filter: blur(10px);
 }
 .feature-item:hover {
     transform: translateY(-10px);
     box-shadow: var(--shadow-hover);
+    background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(224,242,254,0.95) 100%);
+    border-color: rgba(59, 130, 246, 0.2);
 }
 .feature-item h3 {
     margin-bottom: 1rem;
     font-size: 1.5rem;
     color: var(--primary-color);
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 /* Profile Styles (untuk halaman struktur organisasi) */
@@ -191,14 +238,25 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Footer */
 .footer {
-    background-color: #1E293B; /* Abu-abu sangat gelap */
-    color: #cbd5e1;
+    background: var(--gradient-primary);
+    color: rgba(255,255,255,0.9);
     text-align: center;
     padding: 3rem 0;
     margin-top: 3rem;
+    position: relative;
+}
+.footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #60A5FA, #FFFFFF, #60A5FA);
 }
 .footer h3 {
-    color: var(--surface-color);
+    color: #FFFFFF;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 /* --- 5. Responsive Design --- */
@@ -221,35 +279,265 @@ h1, h2, h3, h4, h5, h6 {
 
 /* --- Utility form & card styles to support scaffolded auth views --- */
 .card {
-    background: var(--surface-color);
+    /* Neutral card surface to avoid overwhelming blue everywhere */
+    background: var(--surface-color) !important;
     padding: 0;
     border-radius: var(--border-radius);
     box-shadow: var(--shadow);
     overflow: hidden;
+    border: 1px solid rgba(30, 58, 138, 0.06) !important;
+    backdrop-filter: blur(4px);
+    transition: all 0.18s ease;
+}
+.card:hover {
+    box-shadow: var(--shadow-hover);
+    border-color: rgba(30, 58, 138, 0.08);
 }
 .card-header{
     padding: 12px 16px;
-    background: linear-gradient(90deg, rgba(30,58,138,0.03), rgba(30,58,138,0.01));
-    border-bottom: 1px solid rgba(16,24,40,0.04);
-    font-weight:700; color:var(--heading-color);
+    background: transparent !important; /* keep header neutral */
+    border-bottom: 1px solid rgba(15,23,42,0.06) !important;
+    font-weight:700;
+    color: var(--heading-color) !important;
 }
-.card-body{ padding:16px; }
+.card-body{
+    padding: 20px;
+    background: transparent !important;
+}
 
 .form-control{
     width:100%;
-    padding:10px 12px;
-    border-radius:8px;
-    border:1px solid rgba(16,24,40,0.08);
-    background:var(--surface-color);
-    color:var(--text-color);
-    margin-top:6px;
+    padding:12px 16px;
+    border-radius: var(--border-radius);
+    border: 2px solid rgba(59, 130, 246, 0.2);
+    background: rgba(255,255,255,0.8);
+    color: var(--text-color);
+    margin-top: 6px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
 }
-.form-label{ display:block; font-weight:600; margin-bottom:6px; color:var(--heading-color); }
+.form-control:focus {
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    background: rgba(255,255,255,0.95);
+}
+.form-label{
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--heading-color);
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
 .form-check{ display:flex; align-items:center; gap:8px; }
 .invalid-feedback{ color:#dc2626; font-size:0.9rem; margin-top:6px; }
 .btn-link{ background:transparent; border:0; color:var(--primary-color); text-decoration:underline; cursor:pointer; padding:0; }
 .d-inline{ display:inline-block; }
 .justify-content-center{ display:flex; justify-content:center; }
+
+/* --- Table Styles --- */
+.table {
+    width: 100%;
+    margin-bottom: 1rem;
+    color: var(--text-color);
+    background-color: rgba(255,255,255,0.8);
+    border-collapse: collapse;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+}
+
+.table th,
+.table td {
+    padding: 0.75rem;
+    vertical-align: top;
+    border-top: 1px solid rgba(59, 130, 246, 0.1);
+}
+
+/* Small helper to keep long text columns tidy with ellipsis */
+.truncate-cell {
+    max-width: 120px; /* adjust as needed */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.table thead th {
+    vertical-align: bottom;
+    border-bottom: 2px solid rgba(30, 58, 138, 0.06) !important;
+    background: rgba(59,130,246,0.04) !important; /* subtle tint only */
+    font-weight: 600;
+    color: var(--primary-color) !important;
+}
+
+.table tbody + tbody {
+    border-top: 2px solid rgba(59, 130, 246, 0.1);
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(59, 130, 246, 0.02);
+}
+
+.table-hover tbody tr:hover {
+    color: var(--text-color);
+    background: linear-gradient(90deg, rgba(59, 130, 246, 0.05), rgba(96, 165, 250, 0.05));
+    transform: scale(1.01);
+    transition: all 0.2s ease;
+}
+
+.table-bordered {
+    border: 1px solid rgba(59, 130, 246, 0.1);
+}
+
+.table-bordered th,
+.table-bordered td {
+    border: 1px solid rgba(59, 130, 246, 0.1);
+}
+
+.table-responsive {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* --- Admin Button Styles --- */
+.btn-admin {
+    display: inline-block;
+    padding: 8px 16px;
+    margin-bottom: 0;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.42857143;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-admin::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+.btn-admin:hover::before {
+    left: 100%;
+}
+
+.btn-admin.primary {
+    color: #fff;
+    background: var(--gradient-primary);
+    border-color: var(--primary-color);
+    box-shadow: var(--shadow);
+}
+
+.btn-admin.primary:hover {
+    background: var(--gradient-accent);
+    border-color: var(--primary-light);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+}
+
+.btn-admin.ghost {
+    color: var(--primary-color);
+    background-color: rgba(59, 130, 246, 0.1);
+    border-color: var(--primary-light);
+}
+
+.btn-admin.ghost:hover {
+    color: #fff;
+    background: var(--gradient-primary);
+    border-color: var(--primary-color);
+}
+
+.btn-admin.warn {
+    color: #fff;
+    background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+    border-color: #DC2626;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.btn-admin.warn:hover {
+    background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
+    border-color: #B91C1C;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+}
+
+/* Actions column styling */
+.actions {
+    white-space: nowrap;
+}
+
+.actions .btn-admin {
+    margin-right: 6px;
+    padding: 4px 8px !important; /* smaller clickable area */
+    font-size: 12px !important; /* smaller label */
+    line-height: 1 !important;
+    border-radius: 6px !important;
+    min-width: 36px !important;
+    height: auto !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* Stronger overrides to ensure AdminLTE/Bootstrap button utilities do not override compact layout
+   Targets all buttons inside action cells and specific color variants used in admin lists */
+.table .actions .btn,
+.table .actions .btn-admin,
+.table .actions .btn-sm,
+.table .actions a.btn,
+.table .actions button.btn,
+.table .actions .btn-warning,
+.table .actions .btn-danger,
+.table .actions .btn-primary {
+    padding: 6px 10px !important;
+    font-size: 13px !important;
+    border-radius: 8px !important;
+    min-width: 54px !important;
+    height: auto !important;
+    line-height: 1 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* Reduce the prominent pill look by lowering vertical padding on colored variants specifically */
+.table .actions .btn-warning,
+.table .actions .btn-danger {
+    padding-top: 6px !important;
+    padding-bottom: 6px !important;
+}
+
+/* If you prefer even smaller buttons (icon-only), we can add .btn-admin.sm and update views */
+.btn-admin.sm {
+    padding: 4px 6px !important;
+    font-size: 12px !important;
+    min-width: 40px !important;
+    border-radius: 6px !important;
+}
 
 /* --- Auth pages helpers --- */
 .auth-wrapper{
@@ -261,6 +549,650 @@ h1, h2, h3, h4, h5, h6 {
 .form-actions{ display:flex; gap:8px; align-items:center; }
 
 /* Alerts */
-.alert{ padding:12px 14px; border-radius:8px; margin-bottom:12px; }
-.alert-success{ background:#ECFDF5; color:#065F46; }
+.alert{
+    padding: 16px 20px;
+    border-radius: var(--border-radius);
+    margin-bottom: 16px;
+    border-left: 4px solid;
+    background: rgba(255,255,255,0.9);
+    backdrop-filter: blur(10px);
+    box-shadow: var(--shadow);
+}
+.alert-success{
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(34, 197, 94, 0.05));
+    color: #065F46;
+    border-left-color: #22C55E;
+}
+
+/* Additional Blue Gradient Styles */
+.badge {
+    display: inline-block;
+    padding: 4px 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 6px;
+    border: 1px solid transparent;
+}
+
+.badge.bg-info {
+    background: var(--gradient-accent) !important;
+    color: #FFFFFF !important;
+    border-color: var(--primary-light);
+}
+
+.badge.bg-success {
+    background: linear-gradient(135deg, #22C55E 0%, #16A34A 100%) !important;
+    color: #FFFFFF !important;
+}
+
+.badge.bg-warning {
+    background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%) !important;
+    color: #FFFFFF !important;
+}
+
+.badge.bg-danger {
+    background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%) !important;
+    color: #FFFFFF !important;
+}
+
+/* Enhanced hover effects for interactive elements */
+.btn:hover, .btn-admin:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+}
+
+/* --- AdminLTE Component Overrides --- */
+/* Override AdminLTE colors dengan tema biru gradient */
+
+/* AdminLTE Primary Colors */
+:root {
+    --bs-primary: #1E3A8A !important;
+    --bs-primary-rgb: 30, 58, 138 !important;
+    --bs-primary-text-emphasis: #0F172A !important;
+    --bs-primary-bg-subtle: rgba(30, 58, 138, 0.1) !important;
+    --bs-primary-border-subtle: rgba(59, 130, 246, 0.2) !important;
+}
+
+/* AdminLTE Button Overrides */
+.btn-primary {
+    background: var(--gradient-primary) !important;
+    border-color: var(--primary-color) !important;
+    color: #FFFFFF !important;
+}
+
+.btn-primary:hover {
+    background: var(--gradient-accent) !important;
+    border-color: var(--primary-light) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: var(--shadow-hover) !important;
+}
+
+/* AdminLTE Card Overrides */
+.card {
+    border: 1px solid rgba(59, 130, 246, 0.1) !important;
+    box-shadow: var(--shadow) !important;
+}
+
+.card-header {
+    background: var(--gradient-primary) !important;
+    border-bottom: 1px solid rgba(255,255,255,0.1) !important;
+    color: #FFFFFF !important;
+}
+
+/* AdminLTE Table Overrides */
+.table thead th {
+    background: var(--gradient-primary) !important;
+    color: #FFFFFF !important;
+    border-color: rgba(59, 130, 246, 0.2) !important;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(59, 130, 246, 0.02) !important;
+}
+
+.table-hover tbody tr:hover {
+    background: linear-gradient(90deg, rgba(59, 130, 246, 0.05), rgba(96, 165, 250, 0.05)) !important;
+}
+
+/* AdminLTE Navbar Overrides */
+.main-header.navbar {
+    background: var(--gradient-primary) !important;
+    border-bottom: 1px solid rgba(255,255,255,0.1) !important;
+}
+
+.main-header .navbar-nav .nav-link {
+    color: rgba(255,255,255,0.9) !important;
+}
+
+.main-header .navbar-nav .nav-link:hover {
+    color: #FFFFFF !important;
+    background: rgba(255,255,255,0.1) !important;
+}
+
+/* AdminLTE Sidebar Overrides - Unified */
+.main-sidebar,
+aside.app-sidebar,
+.sidebar {
+    /* use a single sidebar gradient variable for consistent color */
+    background: var(--gradient-sidebar) !important;
+    background-repeat: no-repeat !important;
+    background-size: cover !important;
+    box-shadow: 2px 0 10px rgba(30, 58, 138, 0.18) !important;
+    color: #fff !important;
+}
+
+/* Explicitly ensure collapsed/mini variants keep the gradient */
+.sidebar-mini .main-sidebar,
+.sidebar-collapse .main-sidebar {
+    background: var(--gradient-sidebar) !important;
+}
+
+/* Keep overlay and wrapper transparent so gradient shows */
+.main-sidebar .sidebar-wrapper,
+aside.app-sidebar .sidebar-wrapper {
+    background: transparent !important;
+}
+    
+/* Make inner wrappers transparent so parent gradient shows through */
+.main-sidebar .sidebar-brand,
+.main-sidebar .sidebar-wrapper,
+.main-sidebar .brand-link,
+.main-sidebar .nav-link,
+.main-sidebar .nav-item,
+.main-sidebar .nav-sidebar,
+aside.app-sidebar .sidebar-brand,
+aside.app-sidebar .sidebar-wrapper,
+aside.app-sidebar .brand-link,
+aside.app-sidebar .nav-link,
+aside.app-sidebar .nav-item,
+aside.app-sidebar .nav-sidebar {
+    background: transparent !important;
+    color: inherit !important;
+}
+    
+        /* Subtle hover/active highlight that works on the gradient */
+        aside.app-sidebar .nav-link:hover,
+        aside.app-sidebar .nav-link.active {
+            background: rgba(255,255,255,0.06) !important;
+        }
+    
+/* Ensure icons remain visible */
+.main-sidebar .nav-icon,
+.main-sidebar .brand-image,
+aside.app-sidebar .nav-icon,
+aside.app-sidebar .brand-image {
+    filter: drop-shadow(0 1px 1px rgba(0,0,0,0.25));
+}
+    
+/* Fallback for very old browsers */
+@supports not (background: var(--gradient-sidebar)) {
+    .main-sidebar, aside.app-sidebar, .sidebar { background: #3B82F6 !important; }
+}
+
+/* Sidebar footer should subtly blend with gradient */
+.sidebar-footer {
+    background: linear-gradient(180deg, rgba(59,130,246,0.08), rgba(96,165,250,0.04)) !important;
+}
+
+        /* Defensive: hide injected/extension 'skip to navigation' anchors that may overlay the UI */
+        a[href="#navigation"],
+        a[href^="#skip"],
+        .skip-link,
+        .skip-to-navigation,
+        [aria-label*="Skip to"],
+        [data-skip],
+        [aria-label*="skip" i] {
+            display: none !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
+        }
+
+.sidebar {
+    background: transparent !important;
+}
+
+.sidebar .nav-sidebar .nav-item {
+    margin: 0 !important;
+    border-radius: 0 !important;
+}
+
+.sidebar .nav-link {
+    color: rgba(255,255,255,0.8) !important;
+    border: none !important;
+    padding: 12px 16px !important;
+    transition: all 0.3s ease !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+.sidebar .nav-link::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 4px;
+    background: var(--accent-color);
+    transform: scaleY(0);
+    transition: transform 0.3s ease !important;
+}
+
+.sidebar .nav-link:hover {
+    background: rgba(59, 130, 246, 0.2) !important;
+    color: #FFFFFF !important;
+    transform: translateX(5px) !important;
+}
+
+.sidebar .nav-link:hover::before {
+    transform: scaleY(1) !important;
+}
+
+.sidebar .nav-link.active {
+    background: var(--gradient-accent) !important;
+    color: #FFFFFF !important;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1) !important;
+}
+
+.sidebar .nav-link.active::before {
+    transform: scaleY(1) !important;
+    background: #FFFFFF !important;
+}
+
+.sidebar .nav-link i {
+    width: 20px !important;
+    text-align: center !important;
+    margin-right: 10px !important;
+    opacity: 0.8 !important;
+    transition: all 0.3s ease !important;
+}
+
+.sidebar .nav-link:hover i,
+.sidebar .nav-link.active i {
+    opacity: 1 !important;
+    transform: scale(1.1) !important;
+}
+
+/* Sidebar Brand/Logo */
+.sidebar-brand {
+    /* let parent gradient show through, keep brand legible */
+    background: transparent !important;
+    color: rgba(255,255,255,0.95) !important;
+    border-bottom: 1px solid rgba(255,255,255,0.04) !important;
+    padding: 14px 12px !important;
+    text-align: center !important;
+    font-weight: 700 !important;
+}
+
+.sidebar-brand:hover {
+    background: rgba(255,255,255,0.03) !important;
+    color: #FFFFFF !important;
+}
+
+/* Sidebar User Panel */
+.user-panel {
+    background: rgba(59, 130, 246, 0.1) !important;
+    border-bottom: 1px solid rgba(59, 130, 246, 0.2) !important;
+    padding: 16px !important;
+}
+
+.user-panel .info a {
+    color: rgba(255,255,255,0.9) !important;
+}
+
+.user-panel .info a:hover {
+    color: #FFFFFF !important;
+}
+
+/* Sidebar Menu Headers */
+.sidebar .nav-header {
+    color: rgba(255,255,255,0.6) !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    font-size: 0.75rem !important;
+    padding: 8px 16px !important;
+    letter-spacing: 0.5px !important;
+    border-bottom: 1px solid rgba(59, 130, 246, 0.1) !important;
+}
+
+/* Sidebar Scrollbar */
+.sidebar::-webkit-scrollbar {
+    width: 6px !important;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: rgba(59, 130, 246, 0.1) !important;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: var(--accent-color) !important;
+    border-radius: 3px !important;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-light) !important;
+}
+
+/* Sidebar Collapse/Expand Animation */
+.sidebar-collapse .main-sidebar {
+    transform: translateX(-100%) !important;
+    transition: transform 0.3s ease !important;
+}
+
+.sidebar-open .main-sidebar {
+    transform: translateX(0) !important;
+    transition: transform 0.3s ease !important;
+}
+
+/* Sidebar Badge/Notification */
+.sidebar .badge {
+    background: var(--gradient-accent) !important;
+    color: #FFFFFF !important;
+    border: none !important;
+    font-size: 0.7rem !important;
+    padding: 2px 6px !important;
+}
+
+/* Sidebar Submenu */
+.sidebar .nav-treeview .nav-item > .nav-link {
+    padding-left: 32px !important;
+    font-size: 0.9rem !important;
+}
+
+.sidebar .nav-treeview .nav-item > .nav-link::before {
+    left: 16px !important;
+    width: 8px !important;
+    height: 2px !important;
+    background: rgba(255,255,255,0.4) !important;
+}
+
+.sidebar .nav-treeview .nav-item > .nav-link.active::before {
+    background: #FFFFFF !important;
+}
+
+/* Sidebar Toggle Button */
+.sidebar-toggle {
+    background: rgba(59, 130, 246, 0.1) !important;
+    border: 1px solid rgba(59, 130, 246, 0.2) !important;
+    color: var(--primary-color) !important;
+    border-radius: var(--border-radius) !important;
+    transition: all 0.3s ease !important;
+}
+
+.sidebar-toggle:hover {
+    background: var(--gradient-primary) !important;
+    color: #FFFFFF !important;
+    transform: scale(1.05) !important;
+}
+
+/* Sidebar Mini (Collapsed State) */
+.sidebar-mini .main-sidebar {
+    width: 60px !important;
+}
+
+.sidebar-mini .sidebar .nav-link {
+    text-align: center !important;
+    padding: 12px 8px !important;
+}
+
+.sidebar-mini .sidebar .nav-link span {
+    display: none !important;
+}
+
+.sidebar-mini .sidebar .nav-link i {
+    margin-right: 0 !important;
+    font-size: 1.2rem !important;
+}
+
+/* Sidebar Footer */
+.sidebar-footer {
+    background: rgba(30, 58, 138, 0.9) !important;
+    border-top: 1px solid rgba(59, 130, 246, 0.2) !important;
+    padding: 16px !important;
+    text-align: center !important;
+}
+
+.sidebar-footer a {
+    color: rgba(255,255,255,0.8) !important;
+    text-decoration: none !important;
+    transition: all 0.3s ease !important;
+}
+
+.sidebar-footer a:hover {
+    color: #FFFFFF !important;
+    transform: scale(1.1) !important;
+}
+
+/* Responsive Sidebar */
+@media (max-width: 768px) {
+    .main-sidebar {
+        transform: translateX(-100%) !important;
+        transition: transform 0.3s ease !important;
+    }
+
+    .sidebar-open .main-sidebar {
+        transform: translateX(0) !important;
+        z-index: 1050 !important;
+        box-shadow: 2px 0 20px rgba(0,0,0,0.3) !important;
+    }
+
+    .sidebar-overlay {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        background: rgba(0,0,0,0.5) !important;
+        z-index: 1049 !important;
+        display: none !important;
+    }
+
+    .sidebar-open .sidebar-overlay {
+        display: block !important;
+    }
+}
+
+/* AdminLTE Info Box Overrides */
+.info-box {
+    /* neutral surface for info boxes */
+    background: var(--surface-color) !important;
+    border: 1px solid rgba(30,58,138,0.06) !important;
+    box-shadow: var(--shadow) !important;
+}
+
+.info-box-icon {
+    /* keep a small blue accent for the icon */
+    background: linear-gradient(135deg, var(--primary-light) 0%, var(--accent-color) 100%) !important;
+    color: #FFFFFF !important;
+    display:flex; align-items:center; justify-content:center;
+}
+
+/* AdminLTE Small Box Overrides */
+.small-box {
+    /* neutral tiles with subtle blue accents */
+    background: var(--surface-color) !important;
+    color: var(--heading-color) !important;
+    border: 1px solid rgba(30,58,138,0.06) !important;
+    border-radius: 12px !important;
+    box-shadow: var(--shadow) !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.small-box .inner {
+    padding: 18px !important;
+}
+
+.small-box .inner h3 {
+    color: var(--primary-dark) !important;
+    font-size: 2rem !important;
+    margin: 0 0 8px 0 !important;
+}
+
+.small-box .inner p {
+    color: rgba(15,23,42,0.75) !important;
+    margin: 0 !important;
+}
+
+.small-box .icon {
+    position: absolute !important;
+    top: 12px !important;
+    right: 12px !important;
+    font-size: 34px !important;
+    color: var(--accent-color) !important;
+    opacity: 0.95 !important;
+}
+
+.small-box .small-box-footer {
+    display: block !important;
+    padding: 10px 14px !important;
+    text-decoration: none !important;
+    color: var(--primary-color) !important;
+    background: linear-gradient(90deg, rgba(59,130,246,0.04), rgba(96,165,250,0.04)) !important;
+    border-top: 1px solid rgba(30,58,138,0.04) !important;
+}
+
+.small-box:hover {
+    box-shadow: var(--shadow-hover) !important;
+    transform: translateY(-4px) !important;
+}
+
+/* Strong navbar text override for contrast on gradient header */
+.main-header .navbar-nav .nav-link,
+.navbar .logo,
+.navbar nav a,
+.main-header .navbar-brand,
+.main-header .navbar .brand-text,
+.main-header .user-menu,
+.main-header .navbar .nav-link .dropdown-item,
+.main-header .navbar a {
+    color: #ffffff !important;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.25) !important;
+}
+.main-header .navbar-nav .nav-link:hover,
+.navbar nav a:hover,
+.main-header .navbar a:hover {
+    color: #ffffff !important;
+    background: rgba(255,255,255,0.06) !important;
+}
+
+/* Ensure header icons are visible */
+.main-header .navbar-nav .nav-link .fas,
+.main-header .navbar-nav .nav-link .far,
+.main-header .navbar-nav .nav-link .nav-icon,
+.main-header .navbar .brand-image {
+    color: #ffffff !important;
+    opacity: 1 !important;
+    filter: drop-shadow(0 1px 1px rgba(0,0,0,0.25));
+}
+
+/* Additional rules specifically for this project's header markup (.app-header) */
+nav.app-header.navbar,
+.app-header.navbar,
+.app-header {
+    background: var(--gradient-primary) !important;
+    color: #ffffff !important;
+    border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+}
+
+.app-header .navbar-nav .nav-link,
+.app-header .nav-link,
+.app-header .dropdown-toggle,
+.app-header .navbar .nav-link,
+.app-header .user-menu > a,
+.app-header .user-menu .d-none.d-md-inline,
+.app-header .user-menu span {
+    color: #ffffff !important;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.25) !important;
+}
+
+.app-header .nav-link:hover,
+.app-header .nav-link:focus,
+.app-header .dropdown-item:hover {
+    color: #ffffff !important;
+    background: rgba(255,255,255,0.06) !important;
+}
+
+/* Make inline icons and bootstrap icons visible on the header */
+.app-header .bi,
+.app-header .nav-link i,
+.app-header .nav-link .bi {
+    color: #ffffff !important;
+    opacity: 1 !important;
+}
+
+.app-header .user-image {
+    border: 2px solid rgba(255,255,255,0.18) !important;
+}
+
+/* User dropdown footer buttons: align Profile and Sign out horizontally */
+.user-footer {
+    padding: 12px !important;
+}
+.user-footer .d-flex {
+    display: flex !important;
+    gap: 10px !important;
+    align-items: center !important;
+}
+.user-footer .flex-fill {
+    flex: 1 1 0 !important;
+}
+.user-footer .btn {
+    display: inline-block !important;
+    width: 100% !important;
+    padding: 10px 14px !important;
+    border-radius: 10px !important;
+}
+.user-footer .btn.btn-flat {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    border: 1px solid rgba(15,23,42,0.04) !important;
+    box-shadow: var(--shadow) !important;
+}
+.user-footer .btn.btn-flat:hover {
+    background: #f8fafc !important;
+    color: #0f172a !important;
+}
+
+/* Keep the dropdown contained inside the card: prevent overflow and allow flex items to shrink */
+.dropdown-menu {
+    border-radius: 12px !important;
+    overflow: hidden !important; /* clip any shadows that protrude */
+    box-shadow: var(--shadow) !important;
+    background-clip: padding-box !important;
+}
+
+.dropdown-menu.dropdown-menu-lg {
+    max-width: 380px !important;
+    width: auto !important;
+}
+
+.dropdown-menu .user-footer {
+    padding: 14px !important;
+    background: transparent !important;
+}
+
+.user-footer .d-flex { gap: 12px !important; }
+.user-footer .flex-fill { min-width: 0 !important; }
+
+/* Reduce heavy outer shadows on buttons so they don't visually overflow */
+.user-footer .btn {
+    box-shadow: none !important;
+}
+
+/* If you want a subtle separation line above the footer, use an inset border */
+.dropdown-menu > .user-footer::before {
+    content: '';
+    display: block;
+    height: 1px;
+    background: rgba(15,23,42,0.04);
+    margin: 0 14px 12px 14px;
+}
+
+
+
+
 

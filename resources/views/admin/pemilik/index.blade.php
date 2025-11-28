@@ -1,8 +1,9 @@
 @extends('layouts.lte.main')
 
+@section('page-title', 'Data Pemilik')
+
 @section('content')
 <section class="container mx-auto p-4">
-    <h1 class="text-2xl font-bold mb-4">Daftar Pemilik</h1>
     <div style="text-align:right; padding-bottom:10px;">
         <a href="{{ route('admin.pemilik.create') }}" class="btn-admin primary" style="text-align:left">Tambah Data Pemilik</a>
     </div>

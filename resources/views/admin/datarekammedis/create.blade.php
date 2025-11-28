@@ -26,7 +26,7 @@
                                     <option value="">Pilih Reservasi</option>
                                     @foreach($temuDokters as $temu)
                                         <option value="{{ $temu->idreservasi_dokter }}" {{ old('idreservasi_dokter') == $temu->idreservasi_dokter ? 'selected' : '' }}>
-                                            {{ $temu->no_urut }} - {{ $temu->pet->nama }} ({{ $temu->waktu_daftar }})
+                                            {{ $temu->no_urut }} - {{ $temu->nama_pet ?? ($temu->pet->nama ?? '—') }} ({{ $temu->waktu_daftar ?? '' }})
                                         </option>
                                     @endforeach
                                 </select>
@@ -47,7 +47,7 @@
                                     <option value="">Pilih Dokter</option>
                                     @foreach($dokters as $dokter)
                                         <option value="{{ $dokter->idrole_user }}" {{ old('dokter_pemeriksa') == $dokter->idrole_user ? 'selected' : '' }}>
-                                            {{ $dokter->user->nama }}
+                                            {{ $dokter->nama_user ?? ($dokter->user->nama ?? '—') }}
                                         </option>
                                     @endforeach
                                 </select>

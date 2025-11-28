@@ -17,7 +17,7 @@ class DatapetController extends Controller
             ->select('p.*', 'u.nama as nama_pemilik', 'pm.no_wa as pemilik_no_wa', 'r.nama_ras')
             ->get();
 
-        return view('admin.datapet.index', compact('pets'));
+        return view('resepsionis.datapet.index', compact('pets'));
     }
 
     public function create()
@@ -32,7 +32,7 @@ class DatapetController extends Controller
             ->select('ras_hewan.*', 'jenis_hewan.nama_jenis_hewan')
             ->get();
 
-        return view('admin.datapet.create', compact('pemiliks', 'rasHewans'));
+        return view('resepsionis.datapet.create', compact('pemiliks', 'rasHewans'));
     }
 
     public function store(Request $request)
@@ -50,7 +50,7 @@ class DatapetController extends Controller
 
         DB::table('pet')->insert($validatedData);
 
-        return redirect()->route('admin.datapet.index')->with('success', 'Data pet berhasil ditambahkan.');
+        return redirect()->route('resepsionis.datapet.index')->with('success', 'Data pet berhasil ditambahkan.');
     }
 
     public function edit($id)
@@ -68,7 +68,7 @@ class DatapetController extends Controller
             ->select('ras_hewan.*', 'jenis_hewan.nama_jenis_hewan')
             ->get();
 
-        return view('admin.datapet.edit', compact('pet', 'pemiliks', 'rasHewans'));
+        return view('resepsionis.datapet.edit', compact('pet', 'pemiliks', 'rasHewans'));
     }
 
     public function update(Request $request, $id)
@@ -89,7 +89,7 @@ class DatapetController extends Controller
 
         DB::table('pet')->where('idpet', $id)->update($validatedData);
 
-        return redirect()->route('admin.datapet.index')->with('success', 'Data pet diperbarui.');
+        return redirect()->route('resepsionis.datapet.index')->with('success', 'Data pet diperbarui.');
     }
 
     public function destroy($id)
@@ -97,6 +97,6 @@ class DatapetController extends Controller
         $pet = DB::table('pet')->where('idpet', $id)->first();
         if (!$pet) abort(404);
         DB::table('pet')->where('idpet', $id)->delete();
-        return redirect()->route('admin.datapet.index')->with('success', 'Data deleted.');
+        return redirect()->route('resepsionis.datapet.index')->with('success', 'Data deleted.');
     }
 }

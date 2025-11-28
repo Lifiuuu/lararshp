@@ -4,17 +4,6 @@
 	<div class="container-fluid p-3">
 		<div class="row mb-3">
 			<div class="col-lg-6 col-12">
-				<div class="small-box text-bg-primary">
-					<div class="inner">
-						<h3>{{ $stats['patients'] ?? 0 }}</h3>
-						<p>Data Pasien</p>
-					</div>
-					<div class="icon"><i class="bi bi-person-lines-fill"></i></div>
-					<a href="{{ route('perawat.datapasien.index') }}" class="small-box-footer">More info <i class="bi bi-arrow-right"></i></a>
-				</div>
-			</div>
-
-			<div class="col-lg-6 col-12">
 				<div class="small-box text-bg-success">
 					<div class="inner">
 						<h3>{{ $stats['rekam_medis'] ?? 0 }}</h3>
@@ -73,7 +62,6 @@
 				<div class="card">
 					<div class="card-header">Quick Links</div>
 					<div class="card-body">
-						<a href="{{ route('perawat.datapasien.index') }}" class="btn btn-sm btn-primary mb-2">Manage Pasien</a>
 						<a href="{{ route('perawat.datarekammedis.index') }}" class="btn btn-sm btn-secondary mb-2">Manage Rekam Medis</a>
 					</div>
 				</div>

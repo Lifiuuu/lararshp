@@ -76,6 +76,8 @@ class DashboardController extends Controller
             'pets' => DB::table('pet')->count(),
             'rekam_medis' => DB::table('rekam_medis')->count(),
             'tindakans' => DB::table('kode_tindakan_terapi')->count(),
+            'dokters' => DB::table('dokter')->count(),
+            'perawats' => DB::table('perawat')->count(),
         ];
 
         // Monthly registrations / visits for the last 6 months (based on waktu_daftar)

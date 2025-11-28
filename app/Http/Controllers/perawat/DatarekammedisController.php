@@ -27,6 +27,7 @@ class DatarekammedisController extends Controller
                 'pm.no_wa as pemilik_no_wa',
                 'u_doc.nama as nama_dokter'
             )
+            ->where('t.status', '!=', 'D')
             ->orderBy('t.waktu_daftar', 'desc')
             ->get();
 
@@ -35,31 +36,37 @@ class DatarekammedisController extends Controller
 
     public function create()
     {
-        $temuDokters = DB::table('temu_dokter')
-            ->join('pet', 'temu_dokter.idpet', '=', 'pet.idpet')
-            ->select('temu_dokter.*', 'pet.nama as nama_pet')
+        // Get temu_dokter with status 'P' and not already in rekam_medis
+        $temuDokters = DB::table('temu_dokter as t')
+            ->leftJoin('pet as p', 't.idpet', '=', 'p.idpet')
+            ->leftJoin('pemilik as pm', 'p.idpemilik', '=', 'pm.idpemilik')
+            ->leftJoin('user as u', 'pm.iduser', '=', 'u.iduser')
+            ->where('t.status', 'P')
+            ->whereNotIn('t.idreservasi_dokter', function($query) {
+                $query->select('idreservasi_dokter')->from('rekam_medis');
+            })
+            ->select('t.*', 'p.nama as nama_pet', 'u.nama as nama_pemilik')
             ->get();
 
-        $dokters = DB::table('role_user')
-            ->join('user', 'role_user.iduser', '=', 'user.iduser')
-            ->join('role', 'role_user.idrole', '=', 'role.idrole')
-            ->where('role.nama_role', 'Dokter')
-            ->select('role_user.*', 'user.nama as nama_user')
-            ->get();
-
-        return view('perawat.datarekammedis.create', compact('temuDokters', 'dokters'));
+        return view('perawat.datarekammedis.create', compact('temuDokters'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
             'idreservasi_dokter' => 'required|exists:temu_dokter,idreservasi_dokter',
-            'dokter_pemeriksa' => 'required|exists:role_user,idrole_user',
             'anamnesa' => 'required|string',
             'temuan_klinis' => 'required|string',
             'diagnosa' => 'required|string',
         ]);
 
+        // Get dokter_pemeriksa from temu_dokter
+        $temu = DB::table('temu_dokter')->where('idreservasi_dokter', $validated['idreservasi_dokter'])->first();
+        if (!$temu) {
+            return redirect()->back()->withErrors(['idreservasi_dokter' => 'Reservasi tidak ditemukan.']);
+        }
+
+        $validated['dokter_pemeriksa'] = $temu->idrole_user;
         $validated['anamnesa'] = normalize_name($validated['anamnesa']);
         $validated['temuan_klinis'] = normalize_name($validated['temuan_klinis']);
         $validated['diagnosa'] = normalize_name($validated['diagnosa']);
@@ -77,7 +84,14 @@ class DatarekammedisController extends Controller
 
         $temu = DB::table('temu_dokter')->where('idreservasi_dokter', $rekam->idreservasi_dokter)->first();
 
-        return view('perawat.datarekammedis.edit', compact('rekam', 'temu'));
+        // Get dokter name
+        $dokter = DB::table('role_user')
+            ->join('user', 'role_user.iduser', '=', 'user.iduser')
+            ->where('role_user.idrole_user', $rekam->dokter_pemeriksa)
+            ->select('user.nama as nama_dokter')
+            ->first();
+
+        return view('perawat.datarekammedis.edit', compact('rekam', 'temu', 'dokter'));
     }
 
     /**
@@ -102,7 +116,6 @@ class DatarekammedisController extends Controller
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
-            'dokter_pemeriksa' => 'required|exists:role_user,idrole_user',
             'anamnesa' => 'required|string',
             'temuan_klinis' => 'required|string',
             'diagnosa' => 'required|string',

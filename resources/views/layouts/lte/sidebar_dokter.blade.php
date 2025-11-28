@@ -10,9 +10,3 @@
     <p>Rekam Medis</p>
   </a>
 </li>
-<li class="nav-item">
-  <a href="{{ route('dokter.datatindakan.index') }}" class="nav-link {{ request()->routeIs('dokter.datatindakan.*') ? 'active' : '' }}">
-    <i class="nav-icon bi bi-procedures"></i>
-    <p>Tindakan</p>
-  </a>
-</li>

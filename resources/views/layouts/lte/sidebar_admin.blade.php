@@ -67,6 +67,32 @@
 </li>
 
 
+<!-- Staff -->
+<li class="nav-item has-treeview {{ request()->routeIs('admin.datadokter.*','admin.dataperawat.*') ? 'menu-open' : '' }}">
+  <a href="#" class="nav-link {{ request()->routeIs('admin.datadokter.*','admin.dataperawat.*') ? 'active' : '' }}">
+    <i class="nav-icon bi bi-people-fill"></i>
+    <p>
+      Staff
+      <i class="right bi bi-chevron-down"></i>
+    </p>
+  </a>
+  <ul class="nav nav-treeview">
+    <li class="nav-item">
+      <a href="{{ route('admin.datadokter.index') }}" class="nav-link {{ request()->routeIs('admin.datadokter.*') ? 'active' : '' }}">
+        <i class="nav-icon bi bi-dot"></i>
+        <p>Dokter</p>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="{{ route('admin.dataperawat.index') }}" class="nav-link {{ request()->routeIs('admin.dataperawat.*') ? 'active' : '' }}">
+        <i class="nav-icon bi bi-dot"></i>
+        <p>Perawat</p>
+      </a>
+    </li>
+  </ul>
+</li>
+
+
 <!-- Transaksional -->
 <li class="nav-item has-treeview {{ request()->routeIs('admin.datatindakan.*','admin.datarekammedis.*') ? 'menu-open' : '' }}">
   <a href="#" class="nav-link {{ request()->routeIs('admin.datatindakan.*','admin.datarekammedis.*') ? 'active' : '' }}">

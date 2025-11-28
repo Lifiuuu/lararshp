@@ -46,6 +46,28 @@
                     <a href="{{ route('admin.datatindakan.index') }}" class="small-box-footer">More info <i class="bi bi-arrow-right"></i></a>
                 </div>
             </div>
+
+            <div class="col-lg-3 col-6">
+                <div class="small-box text-bg-info">
+                    <div class="inner">
+                        <h3>{{ $stats['dokters'] ?? 0 }}</h3>
+                        <p>Dokter</p>
+                    </div>
+                    <div class="icon"><i class="bi bi-person-badge"></i></div>
+                    <a href="{{ route('admin.datadokter.index') }}" class="small-box-footer">More info <i class="bi bi-arrow-right"></i></a>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-6">
+                <div class="small-box text-bg-secondary">
+                    <div class="inner">
+                        <h3>{{ $stats['perawats'] ?? 0 }}</h3>
+                        <p>Perawat</p>
+                    </div>
+                    <div class="icon"><i class="bi bi-person-lines-fill"></i></div>
+                    <a href="{{ route('admin.dataperawat.index') }}" class="small-box-footer">More info <i class="bi bi-arrow-right"></i></a>
+                </div>
+            </div>
         </div>
 
         <div class="row">

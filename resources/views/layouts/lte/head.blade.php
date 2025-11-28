@@ -23,3 +23,8 @@
 <!--end::Required Plugin(AdminLTE)-->
 
 @stack('styles')
+
+<!-- Project overrides & theme (load after AdminLTE so our variables win) -->
+<link rel="stylesheet" href="{{ asset('assets/css/global.css') }}" />
+<link rel="stylesheet" href="{{ asset('assets/css/loginform.css') }}" />
+<link rel="stylesheet" href="{{ asset('assets/css/landingpage.css') }}" />

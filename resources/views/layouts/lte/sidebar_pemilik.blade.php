@@ -6,7 +6,7 @@
 </li>
 <li class="nav-item">
   <a href="{{ route('pemilik.pet.index') }}" class="nav-link {{ request()->routeIs('pemilik.pet.*') ? 'active' : '' }}">
-    <i class="nav-icon bi bi-paw"></i>
+    <i class="nav-icon bi bi-heart"></i>
     <p>My Pets</p>
   </a>
 </li>

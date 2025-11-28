@@ -36,6 +36,8 @@ Route::prefix('admin')->name('admin.')->middleware(['administrator'])->group(fun
     Route::resource('manajemenrole', App\Http\Controllers\Admin\ManajemenroleController::class);
     Route::resource('pemilik', App\Http\Controllers\Admin\PemilikController::class);
     Route::resource('rashewan', App\Http\Controllers\Admin\RashewanController::class);
+    Route::resource('datadokter', App\Http\Controllers\Admin\DokterController::class);
+    Route::resource('dataperawat', App\Http\Controllers\Admin\PerawatController::class);
 });
 
 Route::prefix('dokter')->name('dokter.')->middleware(['dokter'])->group(function () {
@@ -43,9 +45,15 @@ Route::prefix('dokter')->name('dokter.')->middleware(['dokter'])->group(function
 
     // Rekam Medis and tindakan for dokter (resourceful)
     Route::resource('datarekammedis', App\Http\Controllers\dokter\DatarekammedisController::class);
+    Route::post('datarekammedis/{id}/complete', [App\Http\Controllers\dokter\DatarekammedisController::class, 'complete'])->name('datarekammedis.complete');
     Route::resource('datatindakan', App\Http\Controllers\dokter\DatatindakanController::class);
     // Detail Rekam Medis (CRUD) for dokter
-    Route::resource('detailrekammedis', App\Http\Controllers\dokter\DetailRekamMedisController::class);
+    Route::get('detailrekammedis/create/{idrekam}', [App\Http\Controllers\dokter\DetailRekamMedisController::class, 'create'])->name('detailrekammedis.create');
+    Route::resource('detailrekammedis', App\Http\Controllers\dokter\DetailRekamMedisController::class)->except(['create', 'show']);
+
+    // Profile
+    Route::get('/profile/edit', [App\Http\Controllers\dokter\ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [App\Http\Controllers\dokter\ProfileController::class, 'update'])->name('profile.update');
 });
 
 Route::prefix('perawat')->name('perawat.')->middleware(['perawat'])->group(function () {
@@ -59,6 +67,10 @@ Route::prefix('perawat')->name('perawat.')->middleware(['perawat'])->group(funct
     Route::resource('datatindakan', App\Http\Controllers\perawat\DatatindakanController::class);
     // Detail Rekam Medis for perawat (view details)
     Route::resource('detailrekammedis', App\Http\Controllers\perawat\DetailRekamMedisController::class)->only(['show']);
+
+    // Profile
+    Route::get('/profile/edit', [App\Http\Controllers\perawat\ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [App\Http\Controllers\perawat\ProfileController::class, 'update'])->name('profile.update');
 });
 
 Route::prefix('resepsionis')->name('resepsionis.')->middleware(['resepsionis'])->group(function () {
@@ -67,6 +79,7 @@ Route::prefix('resepsionis')->name('resepsionis.')->middleware(['resepsionis'])-
     // Pemilik, pet and temu dokter resources for resepsionis
     Route::resource('datapemilik', App\Http\Controllers\resepsionis\DatapemilikController::class);
     Route::resource('datapet', App\Http\Controllers\resepsionis\DatapetController::class);
+    Route::resource('datarekammedis', App\Http\Controllers\resepsionis\DatarekammedisController::class);
     Route::resource('temudokter', App\Http\Controllers\resepsionis\TemudokterController::class);
 });
 
@@ -74,4 +87,9 @@ Route::prefix('pemilik')->name('pemilik.')->middleware(['pemilik'])->group(funct
     Route::get('/dashboard', [App\Http\Controllers\pemilik\DashboardController::class, 'index'])->name('dashboard');
     Route::get('/pet', [App\Http\Controllers\pemilik\PetController::class, 'index'])->name('pet.index');
     Route::get('/rekammedis', [App\Http\Controllers\pemilik\DatarekammedisController::class, 'index'])->name('rekammedis.index');
+    Route::get('/rekammedis/{id}', [App\Http\Controllers\pemilik\DatarekammedisController::class, 'show'])->name('rekammedis.show');
+
+    // Profile
+    Route::get('/profile/edit', [App\Http\Controllers\pemilik\ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [App\Http\Controllers\pemilik\ProfileController::class, 'update'])->name('profile.update');
 });

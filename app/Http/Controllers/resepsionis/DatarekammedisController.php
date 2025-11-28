@@ -18,6 +18,14 @@ class DatarekammedisController extends Controller
             ->select('r.*', 't.no_urut', 't.waktu_daftar', 'p.nama as pet_nama', 'u.nama as pemilik_nama')
             ->get();
 
-        return view('admin.datarekammedis.index', compact('rekamMediss'));
+        return view('resepsionis.datarekammedis.index', compact('rekamMediss'));
+    }
+
+    public function destroy($id)
+    {
+        $rekam = DB::table('rekam_medis')->where('idrekam_medis', $id)->first();
+        if (!$rekam) abort(404);
+        DB::table('rekam_medis')->where('idrekam_medis', $id)->delete();
+        return redirect()->route('resepsionis.datarekammedis.index')->with('success', 'Rekam medis dihapus.');
     }
 }
