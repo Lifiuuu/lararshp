@@ -39,8 +39,8 @@
                             @forelse($recentRekamMediss as $i => $r)
                                 <tr>
                                     <td>{{ $i + 1 }}</td>
-                                    <td>{{ $r->nama_pet ?? '-' }}</td>
-                                    <td>{{ optional(\Carbon\Carbon::parse($r->waktu_daftar ?? $r->created_at ?? null))->format('Y-m-d H:i') ?? '-' }}</td>
+                                    <td>{{ $r->temuDokter->pet->nama ?? '-' }}</td>
+                                    <td>{{ optional(\Carbon\Carbon::parse($r->temuDokter->waktu_daftar ?? $r->created_at ?? null))->format('Y-m-d H:i') ?? '-' }}</td>
                                     <td title="{{ $r->anamnesa ?? '-' }}">{{ Str::limit($r->anamnesa ?? '-', 20) }}</td>
                                 </tr>
                             @empty

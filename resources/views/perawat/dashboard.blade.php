@@ -37,12 +37,12 @@
 								</tr>
 							</thead>
 							<tbody>
-								@foreach(array_slice($data['rekamMediss']->toArray() ?? [], 0, 8) as $i => $r)
+								@foreach(($data['rekamMediss'] ?? collect())->take(8) as $i => $r)
 									<tr>
 										<td>{{ $i + 1 }}</td>
-										<td>{{ $r->nama_pet ?? '-' }}</td>
-										<td>{{ $r->nama_dokter ?? '-' }}</td>
-										<td>{{ optional(\Carbon\Carbon::parse($r->waktu_daftar ?? $r->created_at ?? null))->format('Y-m-d H:i') ?? '-' }}</td>
+										<td>{{ $r->temuDokter->pet->nama ?? '-' }}</td>
+										<td>{{ $r->roleUser->user->nama ?? '-' }}</td>
+										<td>{{ optional(\Carbon\Carbon::parse($r->temuDokter->waktu_daftar ?? $r->created_at ?? null))->format('Y-m-d H:i') ?? '-' }}</td>
 									</tr>
 								@endforeach
 							</tbody>
@@ -94,14 +94,28 @@
 			// Pet pie
 			const petLabels = ("{{ $petLabelsCsv ?? '' }}" === '') ? [] : "{{ $petLabelsCsv }}".split('|');
 			const petValues = ("{{ $petValuesCsv ?? '' }}" === '') ? [] : "{{ $petValuesCsv }}".split(',').map(Number);
-			const petOptions = {
-				series: petValues,
-				chart: { type: 'donut', height: 320 },
-				labels: petLabels,
-				colors: ['#0d6efd','#198754','#ffc107','#dc3545','#6f42c1','#fd7e14']
-			};
-			const petChart = new ApexCharts(document.querySelector('#pet-pie'), petOptions);
-			petChart.render();
+
+			const petContainer = document.querySelector('#pet-pie');
+			if (!petValues || petValues.length === 0) {
+				petContainer.innerHTML = '<div class="d-flex align-items-center justify-content-center" style="height:320px;"><div class="text-muted">No pet data available</div></div>';
+			} else {
+				const petOptions = {
+					series: petValues,
+					chart: { type: 'donut', height: 320 },
+					labels: petLabels,
+					legend: { position: 'bottom' },
+					dataLabels: {
+						enabled: true,
+						formatter: function (val, opts) {
+							const label = opts.w.globals.labels[opts.seriesIndex] || '';
+							return label + '\n' + Math.round(val);
+						}
+					},
+					colors: ['#0d6efd','#198754','#ffc107','#dc3545','#6f42c1','#fd7e14']
+				};
+				const petChart = new ApexCharts(petContainer, petOptions);
+				petChart.render();
+			}
 		})();
 	</script>
 @endpush

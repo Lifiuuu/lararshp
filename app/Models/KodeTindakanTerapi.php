@@ -3,15 +3,31 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class KodeTindakanTerapi extends Model
 {
+    use SoftDeletes;
+
     protected $table = 'kode_tindakan_terapi';
     protected $primaryKey = 'idkode_tindakan_terapi';
     public $incrementing = true;
     protected $keyType = 'int';
     protected $fillable = ['kode', 'deskripsi_tindakan_terapi', 'idkategori', 'idkategori_klinis'];
     public $timestamps = false;
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($model) {
+            $userId = session('user_id');
+            if ($userId) {
+                $model->deleted_by = $userId;
+                $model->save();
+            }
+        });
+    }
 
     public function kategori()
     {

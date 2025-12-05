@@ -21,7 +21,7 @@
 
                 <div class="mb-3">
                     <label for="dokter_pemeriksa" class="form-label">Dokter Pemeriksa</label>
-                    <input type="text" class="form-control" value="{{ $dokter->nama_dokter ?? '-' }}" readonly>
+                    <input type="text" class="form-control" value="{{ $dokter->nama ?? ($rekam->roleUser->user->nama ?? '-') }}" readonly>
                 </div>
 
                 <div class="mb-3">

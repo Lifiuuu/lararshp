@@ -1,121 +1,48 @@
 @extends('layouts.lte.main')
 
+@section('page-title', 'Edit Rekam Medis')
+
+@section('breadcrumb')
+<li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+<li class="breadcrumb-item"><a href="{{ route('admin.datarekammedis.index') }}">Data Rekam Medis</a></li>
+<li class="breadcrumb-item active">Edit</li>
+@endsection
+
 @section('content')
-	<div class="container">
-		<div class="row justify-content-center">
-			<div class="col-md-8">
-				<div class="card">
-					<div class="card-header">Edit Data Rekam Medis</div>
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header">
+            <h5>Edit Rekam Medis #{{ $rekam->idrekam_medis }}</h5>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ route('admin.datarekammedis.update', $rekam->idrekam_medis) }}">
+                @csrf
+                @method('PUT')
 
-					@if (session('error'))
-						<div class="alert alert-danger">
-							{{ session('error') }}
-						</div>
-					@endif
+                <div class="mb-3">
+                    <label for="dokter_pemeriksa" class="form-label">Dokter Pemeriksa</label>
+                    <input type="text" class="form-control" value="{{ $dokter->nama ?? ($rekam->roleUser->user->nama ?? '-') }}" readonly>
+                </div>
 
-					<div class="card-body">
-						<form method="POST" action="{{ route('admin.datarekammedis.update', $rekam->idrekam_medis) }}">
-							@csrf
-							@method('PUT')
+                <div class="mb-3">
+                    <label for="anamnesa" class="form-label">Anamnesa</label>
+                    <textarea name="anamnesa" id="anamnesa" class="form-control" rows="3" required>{{ old('anamnesa', $rekam->anamnesa) }}</textarea>
+                </div>
 
-							<div class="form-group">
-								<label for="idreservasi_dokter">Reservasi Dokter</label>
-								<select class="form-control @error('idreservasi_dokter') is-invalid @enderror"
-										id="idreservasi_dokter"
-										name="idreservasi_dokter"
-										required>
-									<option value="">Pilih Reservasi</option>
-									@foreach($temuDokters as $temu)
-										<option value="{{ $temu->idreservasi_dokter }}" {{ (old('idreservasi_dokter', $rekam->idreservasi_dokter) == $temu->idreservasi_dokter) ? 'selected' : '' }}>
-											{{ $temu->no_urut }} - {{ $temu->nama_pet ?? ($temu->pet->nama ?? '—') }} ({{ $temu->waktu_daftar ?? '' }})
-										</option>
-									@endforeach
-								</select>
+                <div class="mb-3">
+                    <label for="temuan_klinis" class="form-label">Temuan Klinis</label>
+                    <textarea name="temuan_klinis" id="temuan_klinis" class="form-control" rows="3" required>{{ old('temuan_klinis', $rekam->temuan_klinis) }}</textarea>
+                </div>
 
-								@error('idreservasi_dokter')
-									<div class="invalid-feedback">
-										{{ $message }}
-									</div>
-								@enderror
-							</div>
+                <div class="mb-3">
+                    <label for="diagnosa" class="form-label">Diagnosa</label>
+                    <textarea name="diagnosa" id="diagnosa" class="form-control" rows="3" required>{{ old('diagnosa', $rekam->diagnosa) }}</textarea>
+                </div>
 
-							<div class="form-group">
-								<label for="dokter_pemeriksa">Dokter Pemeriksa</label>
-								<select class="form-control @error('dokter_pemeriksa') is-invalid @enderror"
-										id="dokter_pemeriksa"
-										name="dokter_pemeriksa"
-										required>
-									<option value="">Pilih Dokter</option>
-									@foreach($dokters as $dokter)
-										<option value="{{ $dokter->idrole_user }}" {{ (old('dokter_pemeriksa', $rekam->dokter_pemeriksa) == $dokter->idrole_user) ? 'selected' : '' }}>
-											{{ $dokter->nama_user ?? ($dokter->user->nama ?? '—') }}
-										</option>
-									@endforeach
-								</select>
-
-								@error('dokter_pemeriksa')
-									<div class="invalid-feedback">
-										{{ $message }}
-									</div>
-								@enderror
-							</div>
-
-							<div class="form-group">
-								<label for="anamnesa">Anamnesa</label>
-								<textarea class="form-control @error('anamnesa') is-invalid @enderror"
-										  id="anamnesa"
-										  name="anamnesa"
-										  rows="3"
-										  placeholder="Masukkan anamnesa/keluhan"
-										  required>{{ old('anamnesa', $rekam->anamnesa) }}</textarea>
-
-								@error('anamnesa')
-									<div class="invalid-feedback">
-										{{ $message }}
-									</div>
-								@enderror
-							</div>
-
-							<div class="form-group">
-								<label for="temuan_klinis">Temuan Klinis</label>
-								<textarea class="form-control @error('temuan_klinis') is-invalid @enderror"
-										  id="temuan_klinis"
-										  name="temuan_klinis"
-										  rows="3"
-										  placeholder="Masukkan temuan klinis"
-										  required>{{ old('temuan_klinis', $rekam->temuan_klinis) }}</textarea>
-
-								@error('temuan_klinis')
-									<div class="invalid-feedback">
-										{{ $message }}
-									</div>
-								@enderror
-							</div>
-
-							<div class="form-group">
-								<label for="diagnosa">Diagnosa</label>
-								<textarea class="form-control @error('diagnosa') is-invalid @enderror"
-										  id="diagnosa"
-										  name="diagnosa"
-										  rows="3"
-										  placeholder="Masukkan diagnosa"
-										  required>{{ old('diagnosa', $rekam->diagnosa) }}</textarea>
-
-								@error('diagnosa')
-									<div class="invalid-feedback">
-										{{ $message }}
-									</div>
-								@enderror
-							</div>
-
-							<div class="mt-3">
-								<button type="submit" class="btn btn-primary">Simpan Perubahan</button>
-								<a href="{{ route('admin.datarekammedis.index') }}" class="btn btn-secondary">Batal</a>
-							</div>
-						</form>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+                <button type="submit" class="btn btn-primary">Perbarui</button>
+                <a href="{{ route('admin.datarekammedis.index') }}" class="btn btn-secondary">Kembali</a>
+            </form>
+        </div>
+    </div>
+</div>
 @endsection

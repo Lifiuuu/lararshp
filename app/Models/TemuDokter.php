@@ -4,15 +4,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class TemuDokter extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'temu_dokter';
+    protected $primaryKey = 'idreservasi_dokter';
+    public $incrementing = true;
+    protected $keyType = 'int';
+    public $timestamps = false;
 
     protected $fillable = [
-        'idreservasi_dokter',
         'no_urut',
         'waktu_daftar',
         'status',
@@ -20,9 +24,21 @@ class TemuDokter extends Model
         'idrole_user',
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($model) {
+            $userId = session('user_id');
+            if ($userId) {
+                $model->deleted_by = $userId;
+                $model->save();
+            }
+        });
+    }
+
     protected $casts = [
-        'tanggal_temu' => 'date',
-        'waktu_temu' => 'datetime',
+        // Removed casts for non-existent columns
     ];
 
     // Relationship with Pet
@@ -34,10 +50,10 @@ class TemuDokter extends Model
     // Relationship with RoleUser (assuming dokter is linked via role_user)
     public function roleUser()
     {
-        return $this->belongsTo(RoleUser::class, 'id_dokter');
+        return $this->belongsTo(RoleUser::class, 'idrole_user', 'idrole_user');
     }
 
-    // Relationship with DataUser for dokter
+    // Relationship with DataUser for dokter via roleUser
     public function dokter()
     {
         return $this->belongsTo(DataUser::class, 'id_dokter');

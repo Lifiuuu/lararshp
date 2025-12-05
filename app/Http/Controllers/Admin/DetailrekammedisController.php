@@ -1,69 +1,37 @@
 <?php
 
-namespace App\Http\Controllers\dokter;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
 use App\Models\DetailRekamMedis;
 use App\Models\RekamMedis;
 use App\Models\KodeTindakanTerapi;
-use App\Models\RoleUser;
 
-class DetailRekamMedisController extends Controller
+class DetailrekammedisController extends Controller
 {
     public function index()
     {
-        $userId = Auth::id();
-        $roleUser = RoleUser::where('iduser', $userId)->where('idrole', 2)->first(); // 2 = Dokter
-        if (!$roleUser) abort(403);
-
         $details = DetailRekamMedis::with('rekamMedis.temuDokter.pet', 'kodeTindakanTerapi.kategori', 'kodeTindakanTerapi.kategoriKlinis')
-            ->whereHas('rekamMedis', function($q) use ($roleUser) {
-                $q->where('dokter_pemeriksa', $roleUser->idrole_user);
-            })
             ->when(request('rekam_medis'), function($q) {
                 $q->where('idrekam_medis', request('rekam_medis'));
             })
             ->orderBy('iddetail_rekam_medis', 'desc')
             ->get();
 
-        // $query = DB::table('detail_rekam_medis as d')
-        //     ->join('rekam_medis as r', 'd.idrekam_medis', '=', 'r.idrekam_medis')
-        //     ->join('kode_tindakan_terapi as k', 'd.idkode_tindakan_terapi', '=', 'k.idkode_tindakan_terapi')
-        //     ->leftJoin('kategori as kat', 'k.idkategori', '=', 'kat.idkategori')
-        //     ->leftJoin('kategori_klinis as kk', 'k.idkategori_klinis', '=', 'kk.idkategori_klinis')
-        //     ->leftJoin('temu_dokter as t', 'r.idreservasi_dokter', '=', 't.idreservasi_dokter')
-        //     ->leftJoin('pet as p', 't.idpet', '=', 'p.idpet')
-        //     ->select('d.*', 'r.anamnesa', 'k.kode', 'k.deskripsi_tindakan_terapi', 'kat.nama_kategori', 'kk.nama_kategori_klinis', 'p.nama as nama_pet', 't.waktu_daftar')
-        //     ->where('r.dokter_pemeriksa', $roleUser->idrole_user);
-
-        // if (request('rekam_medis')) {
-        //     $query->where('d.idrekam_medis', request('rekam_medis'));
-        // }
-
-        // $details = $query->orderBy('d.iddetail_rekam_medis', 'desc')->get();
-
-        return view('dokter.detailrekammedis.index', compact('details'));
+        return view('admin.detailrekammedis.index', compact('details'));
     }
 
     public function create($idrekam)
     {
         $rekam = RekamMedis::findOrFail($idrekam);
 
-        // $rekam = DB::table('rekam_medis')->where('idrekam_medis', $idrekam)->first();
-        // if (!$rekam) abort(404);
-
         // Get tindakans that are not already used for this rekam_medis
         $usedTindakans = DetailRekamMedis::where('idrekam_medis', $idrekam)->pluck('idkode_tindakan_terapi')->toArray();
         $tindakans = KodeTindakanTerapi::whereNotIn('idkode_tindakan_terapi', $usedTindakans)->get();
 
-        // // Get tindakans that are not already used for this rekam_medis
-        // $usedTindakans = DB::table('detail_rekam_medis')->where('idrekam_medis', $idrekam)->pluck('idkode_tindakan_terapi')->toArray();
-        // $tindakans = DB::table('kode_tindakan_terapi')->whereNotIn('idkode_tindakan_terapi', $usedTindakans)->get();
-
-        return view('dokter.detailrekammedis.create', compact('rekam', 'tindakans'));
+        return view('admin.detailrekammedis.create', compact('rekam', 'tindakans'));
     }
 
     public function store(Request $request)
@@ -105,26 +73,16 @@ class DetailRekamMedisController extends Controller
 
         DetailRekamMedis::insert($data);
 
-        // DB::table('detail_rekam_medis')->insert($data);
-
-        return redirect()->route('dokter.datarekammedis.index')->with('success', 'Detail rekam medis ditambahkan.');
+        return redirect()->route('admin.datatindakan.index')->with('success', 'Detail rekam medis ditambahkan.');
     }
 
     public function edit($id)
     {
         $detail = DetailRekamMedis::with('kodeTindakanTerapi')->findOrFail($id);
 
-        // $detail = DB::table('detail_rekam_medis as d')
-        //     ->leftJoin('kode_tindakan_terapi as k', 'd.idkode_tindakan_terapi', '=', 'k.idkode_tindakan_terapi')
-        //     ->select('d.*', 'k.kode', 'k.deskripsi_tindakan_terapi')
-        //     ->where('d.iddetail_rekam_medis', $id)
-        //     ->first();
-        // if (!$detail) abort(404);
-
         $tindakans = KodeTindakanTerapi::all();
 
-        // $tindakans = DB::table('kode_tindakan_terapi')->get();
-        return view('dokter.detailrekammedis.edit', compact('detail', 'tindakans'));
+        return view('admin.detailrekammedis.edit', compact('detail', 'tindakans'));
     }
 
     public function update(Request $request, $id)
@@ -139,21 +97,13 @@ class DetailRekamMedisController extends Controller
         $detail = DetailRekamMedis::findOrFail($id);
         $detail->update($validated);
 
-        // $exists = DB::table('detail_rekam_medis')->where('iddetail_rekam_medis', $id)->first();
-        // if (!$exists) abort(404);
-
-        // DB::table('detail_rekam_medis')->where('iddetail_rekam_medis', $id)->update($validated);
-
-        return redirect()->route('dokter.datarekammedis.index')->with('success', 'Detail rekam medis diperbarui.');
+        return redirect()->route('admin.datatindakan.index')->with('success', 'Detail rekam medis diperbarui.');
     }
 
     public function destroy($id)
     {
         DetailRekamMedis::findOrFail($id)->delete();
 
-        // $exists = DB::table('detail_rekam_medis')->where('iddetail_rekam_medis', $id)->first();
-        // if (!$exists) abort(404);
-        // DB::table('detail_rekam_medis')->where('iddetail_rekam_medis', $id)->delete();
         return redirect()->back()->with('success', 'Detail rekam medis dihapus.');
     }
 }

@@ -42,7 +42,7 @@
                         @forelse($data['pets']->take(5) as $pet)
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             {{ $pet->nama }}
-                            <span class="badge badge-secondary">{{ $pet->nama_ras ?? '-' }}</span>
+                            <span class="badge badge-secondary">{{ $pet->rasHewan->nama_ras ?? '-' }}</span>
                         </li>
                         @empty
                         <li class="list-group-item">Belum ada data pet.</li>
@@ -61,9 +61,9 @@
                     <ul class="list-group list-group-flush">
                         @forelse($data['rekamMediss']->take(5) as $rekamMedis)
                         <li class="list-group-item">
-                            <div><strong>{{ $rekamMedis->pet_nama ?? '-' }}</strong></div>
-                            <div class="small text-muted">{{ $rekamMedis->created_at }}</div>
-                            <div class="small">Diagnosa: {{ $rekamMedis->diagnosa }}</div>
+                            <div><strong>{{ optional($rekamMedis->temuDokter->pet)->nama ?? '-' }}</strong></div>
+                            <div class="small text-muted">{{ optional(\Carbon\Carbon::parse($rekamMedis->temuDokter->waktu_daftar ?? $rekamMedis->created_at))->format('Y-m-d H:i') ?? '-' }}</div>
+                            <div class="small">Diagnosa: {{ $rekamMedis->diagnosa ?? '-' }}</div>
                         </li>
                         @empty
                         <li class="list-group-item">Belum ada data rekam medis.</li>

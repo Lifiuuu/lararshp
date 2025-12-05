@@ -26,7 +26,7 @@
                         @foreach($perawats as $index => $perawat)
                         <tr>
                             <td class="text-center">{{ $index + 1 }}</td>
-                            <td>{{ $perawat->user_name ?? 'N/A' }}</td>
+                            <td>{{ $perawat->user->nama ?? 'N/A' }}</td>
                             <td>{{ $perawat->alamat ?? '' }}</td>
                             <td>{{ $perawat->no_hp ?? '' }}</td>
                             <td>{{ $perawat->jenis_kelamin == 'L' ? 'Laki-laki' : 'Perempuan' }}</td>

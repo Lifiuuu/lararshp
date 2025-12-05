@@ -19,12 +19,12 @@
                 @csrf
 
                 <div class="mb-3">
-                    <label for="idreservasi_dokter" class="form-label">Pilih Temu Dokter (Pasien Pending)</label>
+                    <label for="idreservasi_dokter" class="form-label">Pilih Temu Dokter</label>
                     <select name="idreservasi_dokter" id="idreservasi_dokter" class="form-select" required>
                         <option value="">-- Pilih Temu Dokter --</option>
                         @foreach($temuDokters as $t)
                             <option value="{{ $t->idreservasi_dokter }}">
-                                #{{ $t->idreservasi_dokter }} - {{ $t->nama_pet }} (Pemilik: {{ $t->nama_pemilik }})
+                                {{ $t->no_urut ?? $t->idreservasi_dokter }} - {{ $t->nama_pet }} - {{ $t->nama_pemilik }}
                             </option>
                         @endforeach
                     </select>

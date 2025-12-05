@@ -21,29 +21,29 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6">
-                            <dl class="row">
-                                <dt class="col-sm-4">Pet:</dt>
-                                <dd class="col-sm-8">{{ $rekamMedis->pet_nama ?? 'N/A' }}</dd>
+                            <dl class="row record-info">
+                                <dt class="col-sm-4">Pet</dt>
+                                <dd class="col-sm-8">{{ optional($rekamMedis->temuDokter->pet)->nama ?? 'N/A' }}</dd>
 
-                                <dt class="col-sm-4">Dokter Pemeriksa:</dt>
-                                <dd class="col-sm-8">{{ $rekamMedis->dokter_nama ?? 'N/A' }}</dd>
+                                <dt class="col-sm-4">Dokter Pemeriksa</dt>
+                                <dd class="col-sm-8">{{ optional($rekamMedis->temuDokter->roleUser->user)->nama ?? 'N/A' }}</dd>
 
-                                <dt class="col-sm-4">Tanggal Dibuat:</dt>
-                                <dd class="col-sm-8">{{ $rekamMedis->created_at }}</dd>
+                                <dt class="col-sm-4">Tanggal Daftar</dt>
+                                <dd class="col-sm-8">{{ optional(\Carbon\Carbon::parse($rekamMedis->temuDokter->waktu_daftar ?? $rekamMedis->created_at))->format('d M Y H:i') ?? 'N/A' }}</dd>
 
-                                <dt class="col-sm-4">No Urut:</dt>
-                                <dd class="col-sm-8">{{ $rekamMedis->no_urut }}</dd>
+                                <dt class="col-sm-4">No Urut</dt>
+                                <dd class="col-sm-8">{{ optional($rekamMedis->temuDokter)->no_urut ?? 'N/A' }}</dd>
                             </dl>
                         </div>
                         <div class="col-md-6">
-                            <dl class="row">
-                                <dt class="col-sm-4">Anamnesa:</dt>
+                            <dl class="row record-info">
+                                <dt class="col-sm-4">Anamnesa</dt>
                                 <dd class="col-sm-8">{{ $rekamMedis->anamnesa }}</dd>
 
-                                <dt class="col-sm-4">Temuan Klinis:</dt>
+                                <dt class="col-sm-4">Temuan Klinis</dt>
                                 <dd class="col-sm-8">{{ $rekamMedis->temuan_klinis }}</dd>
 
-                                <dt class="col-sm-4">Diagnosa:</dt>
+                                <dt class="col-sm-4">Diagnosa</dt>
                                 <dd class="col-sm-8">{{ $rekamMedis->diagnosa }}</dd>
                             </dl>
                         </div>
@@ -60,7 +60,7 @@
                     <h3 class="card-title">Detail Tindakan Terapi</h3>
                 </div>
                 <div class="card-body">
-                    @if($detailRekamMedis->count() > 0)
+                        @if($detailRekamMedis->count() > 0)
                         <table class="table table-bordered table-striped">
                             <thead>
                                 <tr>
@@ -76,11 +76,11 @@
                                 @foreach($detailRekamMedis as $index => $detail)
                                 <tr>
                                     <td>{{ $index + 1 }}</td>
-                                    <td>{{ $detail->kode }}</td>
-                                    <td>{{ $detail->deskripsi_tindakan_terapi }}</td>
-                                    <td>{{ $detail->nama_kategori }}</td>
-                                    <td>{{ $detail->nama_kategori_klinis }}</td>
-                                    <td>{{ $detail->detail }}</td>
+                                    <td>{{ optional($detail->kodeTindakanTerapi)->kode ?? 'N/A' }}</td>
+                                    <td>{{ optional($detail->kodeTindakanTerapi)->deskripsi_tindakan_terapi ?? 'N/A' }}</td>
+                                    <td>{{ optional(optional($detail->kodeTindakanTerapi)->kategori)->nama_kategori ?? 'N/A' }}</td>
+                                    <td>{{ optional(optional($detail->kodeTindakanTerapi)->kategoriKlinis)->nama_kategori_klinis ?? 'N/A' }}</td>
+                                    <td>{{ $detail->detail ?? '-' }}</td>
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -94,3 +94,36 @@
     </div>
 </div>
 @endsection
+
+@push('styles')
+    <style>
+        /* Align dl labels and values so the colon sits flush and values start aligned */
+        .record-info dt {
+            position: relative;
+            text-align: right;
+            padding-right: 3rem; /* increase space before the pseudo-colon */
+            white-space: nowrap;
+        }
+        /* draw a consistent colon at the right edge of the label column */
+        .record-info dt::after {
+            content: ":";
+            position: absolute;
+            /* move further to the right so the colon sits more into the value column */
+            right: -1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: inherit;
+        }
+
+        .record-info dd {
+            margin-left: 0; /* bootstrap puts margin-left; reset so columns control layout */
+            padding-left: 1.4rem; /* add more space between colon and value */
+        }
+        /* ensure small screens keep readable spacing */
+        @media (max-width: 576px) {
+            .record-info dt { text-align: left; padding-right: .25rem; }
+            .record-info dt::after { position: static; transform: none; margin-left: .25rem; }
+            .record-info dd { padding-left: .6rem; }
+        }
+    </style>
+@endpush

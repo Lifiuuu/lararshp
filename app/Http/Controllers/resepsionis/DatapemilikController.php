@@ -5,38 +5,61 @@ namespace App\Http\Controllers\resepsionis;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\Pemilik;
+use App\Models\User;
+use App\Models\Role;
+use App\Models\RoleUser;
 
 class DatapemilikController extends Controller
 {
     public function index()
     {
-        $pemiliks = DB::table('pemilik as pm')
-            ->leftJoin('user as u', 'pm.iduser', '=', 'u.iduser')
-            ->select('pm.*', 'u.nama as user_nama', 'u.email as user_email')
-            ->get();
+        $pemiliks = Pemilik::with('user')->get();
+
+        // $pemiliks = DB::table('pemilik as pm')
+        //     ->leftJoin('user as u', 'pm.iduser', '=', 'u.iduser')
+        //     ->select('pm.*', 'u.nama as user_nama', 'u.email as user_email')
+        //     ->get();
 
         return view('resepsionis.datapemilik.index', compact('pemiliks'));
     }
 
     public function create()
     {
-        $users = DB::table('user')->get();
-        return view('resepsionis.datapemilik.create', compact('users'));
+        return view('resepsionis.datapemilik.create');
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'no_wa' => 'required|string|max:50',
+            'no_wa' => 'required|string|max:15',
             'alamat' => 'required|string|max:255',
-            'iduser' => 'nullable|exists:user,iduser'
+            'nama' => 'required|string|max:255',
+            'email' => 'required|email|unique:user,email',
+            'password' => 'required|string|min:8|confirmed'
         ]);
 
-        DB::table('pemilik')->insert([
+        // Buat user baru
+        $user = User::create([
+            'nama' => $validated['nama'],
+            'email' => $validated['email'],
+            'password' => bcrypt($validated['password']),
+        ]);
+
+        // Assign role Pemilik
+        $rolePemilik = Role::where('nama_role', 'Pemilik')->first();
+        if ($rolePemilik) {
+            RoleUser::create([
+                'iduser' => $user->iduser,
+                'idrole' => $rolePemilik->idrole,
+            ]);
+        }
+
+        // Buat pemilik
+        Pemilik::create([
             'no_wa' => $validated['no_wa'],
             'alamat' => $validated['alamat'],
-            'iduser' => $validated['iduser'] ?? null,
-            'is_deleted' => 0,
+            'iduser' => $user->iduser,
         ]);
 
         return redirect()->route('resepsionis.datapemilik.index')->with('success', 'Pemilik berhasil ditambahkan.');
@@ -44,9 +67,13 @@ class DatapemilikController extends Controller
 
     public function edit($id)
     {
-        $pemilik = DB::table('pemilik')->where('idpemilik', $id)->first();
-        if (!$pemilik) abort(404);
-        $users = DB::table('user')->get();
+        $pemilik = Pemilik::findOrFail($id);
+
+        // $pemilik = DB::table('pemilik')->where('idpemilik', $id)->first();
+        // if (!$pemilik) abort(404);
+        $users = User::all();
+
+        // $users = DB::table('user')->get();
         return view('resepsionis.datapemilik.edit', compact('pemilik', 'users'));
     }
 
@@ -58,23 +85,28 @@ class DatapemilikController extends Controller
             'iduser' => 'nullable|exists:user,iduser'
         ]);
 
-        $pemilik = DB::table('pemilik')->where('idpemilik', $id)->first();
-        if (!$pemilik) abort(404);
+        $pemilik = Pemilik::findOrFail($id);
+        $pemilik->update($validated);
 
-        DB::table('pemilik')->where('idpemilik', $id)->update([
-            'no_wa' => $validated['no_wa'],
-            'alamat' => $validated['alamat'],
-            'iduser' => $validated['iduser'] ?? null,
-        ]);
+        // $pemilik = DB::table('pemilik')->where('idpemilik', $id)->first();
+        // if (!$pemilik) abort(404);
+
+        // DB::table('pemilik')->where('idpemilik', $id)->update([
+        //     'no_wa' => $validated['no_wa'],
+        //     'alamat' => $validated['alamat'],
+        //     'iduser' => $validated['iduser'] ?? null,
+        // ]);
 
         return redirect()->route('resepsionis.datapemilik.index')->with('success', 'Pemilik diperbarui.');
     }
 
     public function destroy($id)
     {
-        $pemilik = DB::table('pemilik')->where('idpemilik', $id)->first();
-        if (!$pemilik) abort(404);
-        DB::table('pemilik')->where('idpemilik', $id)->delete();
+        Pemilik::findOrFail($id)->delete();
+
+        // $pemilik = DB::table('pemilik')->where('idpemilik', $id)->first();
+        // if (!$pemilik) abort(404);
+        // DB::table('pemilik')->where('idpemilik', $id)->delete();
         return redirect()->route('resepsionis.datapemilik.index')->with('success', 'Pemilik dihapus.');
     }
 }

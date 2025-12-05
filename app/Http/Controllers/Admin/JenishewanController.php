@@ -11,8 +11,8 @@ class JenishewanController extends Controller
 {
     public function index()
     {
-        // $jenisHewans = JenisHewan::all();
-        $jenisHewans = DB::table('jenis_hewan')->get();
+        $jenisHewans = JenisHewan::whereNull('deleted_at')->get();
+        // $jenisHewans = DB::table('jenis_hewan')->get();
         return view('admin.jenishewan.index', compact('jenisHewans'));
     }
 
@@ -59,13 +59,13 @@ class JenishewanController extends Controller
 
     protected function createjenishewan(array $data){
         try {
-            // return JenisHewan::create([
-            //     'nama_jenis_hewan' => normalize_name($data['nama_jenis_hewan']),
-            // ]);
-            $id = DB::table('jenis_hewan')->insertGetId([
+            return JenisHewan::create([
                 'nama_jenis_hewan' => normalize_name($data['nama_jenis_hewan']),
             ]);
-            return (object)['idjenis_hewan' => $id, 'nama_jenis_hewan' => normalize_name($data['nama_jenis_hewan'])];
+            // $id = DB::table('jenis_hewan')->insertGetId([
+            //     'nama_jenis_hewan' => normalize_name($data['nama_jenis_hewan']),
+            // ]);
+            // return (object)['idjenis_hewan' => $id, 'nama_jenis_hewan' => normalize_name($data['nama_jenis_hewan'])];
         } catch (\Exception $e) {
             throw new \Exception('gagal menyimpan data jenis hewan: ' . $e->getMessage());
         }
@@ -78,23 +78,30 @@ class JenishewanController extends Controller
 
     public function edit($id)
     {
-        return redirect()->route('admin.jenishewan.index')->with('info', 'Edit form not implemented yet.');
+        $jenis = JenisHewan::findOrFail($id);
+        return view('admin.jenishewan.edit', compact('jenis'));
     }
 
     public function update(Request $request, $id)
     {
-        return redirect()->route('admin.jenishewan.index')->with('info', 'Update not implemented yet.');
+        $validated = $this->validatejenishewan($request, $id);
+
+        $jenis = JenisHewan::findOrFail($id);
+        $jenis->nama_jenis_hewan = normalize_name($validated['nama_jenis_hewan']);
+        $jenis->save();
+
+        return redirect()->route('admin.jenishewan.index')->with('success', 'Jenis hewan berhasil diperbarui.');
     }
 
     public function destroy($id)
     {
-        // $jenis = JenisHewan::findOrFail($id);
-        // $jenis->delete();
-        $jenis = DB::table('jenis_hewan')->where('idjenis_hewan', $id)->first();
-        if (!$jenis) {
-            abort(404);
-        }
-        DB::table('jenis_hewan')->where('idjenis_hewan', $id)->delete();
+        $jenis = JenisHewan::findOrFail($id);
+        $jenis->delete();
+        // $jenis = DB::table('jenis_hewan')->where('idjenis_hewan', $id)->first();
+        // if (!$jenis) {
+        //     abort(404);
+        // }
+        // DB::table('jenis_hewan')->where('idjenis_hewan', $id)->delete();
         return redirect()->route('admin.jenishewan.index')->with('success', 'Data deleted.');
     }
 }

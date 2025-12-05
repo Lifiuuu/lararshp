@@ -3,8 +3,9 @@
 @section('page-title', 'Tambah Detail Rekam Medis')
 
 @section('breadcrumb')
-<li class="breadcrumb-item"><a href="{{ route('dokter.dashboard') }}">Dashboard</a></li>
-<li class="breadcrumb-item"><a href="{{ route('dokter.datarekammedis.index') }}">Data Rekam Medis</a></li>
+<li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+<li class="breadcrumb-item"><a href="{{ route('admin.datatindakan.index') }}">Data Rekam Medis</a></li>
+<li class="breadcrumb-item"><a href="{{ route('admin.detailrekammedis.index') }}">Detail Rekam Medis</a></li>
 <li class="breadcrumb-item active">Tambah Detail Rekam Medis</li>
 @endsection
 
@@ -29,7 +30,7 @@
                         <label class="form-label">Diagnosa</label>
                         <textarea class="form-control" readonly>{{ $rekam->diagnosa ?? '-' }}</textarea>
                     </div>
-                    <form action="{{ route('dokter.detailrekammedis.store') }}" method="POST" id="tindakanForm">
+                    <form action="{{ route('admin.detailrekammedis.store') }}" method="POST" id="tindakanForm">
                         @csrf
                         <input type="hidden" name="idrekam_medis" value="{{ $rekam->idrekam_medis }}">
                         <div id="tindakanRows">
@@ -55,7 +56,7 @@
                         <button type="button" class="btn btn-secondary mb-3" id="addRow">Tambah Tindakan Lain</button>
                         <br>
                         <button type="submit" class="btn btn-primary">Simpan Semua</button>
-                        <a href="{{ route('dokter.datarekammedis.index') }}" class="btn btn-secondary">Batal</a>
+                        <a href="{{ route('admin.datatindakan.index') }}" class="btn btn-secondary">Batal</a>
                     </form>
                 </div>
             </div>
@@ -70,14 +71,14 @@ document.getElementById('addRow').addEventListener('click', function() {
     const container = document.getElementById('tindakanRows');
     const rows = container.querySelectorAll('.tindakan-row');
     const newRow = rows[0].cloneNode(true);
-    
+
     // Reset values
     newRow.querySelector('select').selectedIndex = 0;
     newRow.querySelector('textarea').value = '';
-    
+
     // Show remove button
     newRow.querySelector('.remove-row').style.display = 'block';
-    
+
     container.appendChild(newRow);
 });
 

@@ -11,8 +11,8 @@ class DatakategoriklinisController extends Controller
 {
     public function index()
     {
-        // $kategoriKliniss = KategoriKlinis::all();
-        $kategoriKliniss = DB::table('kategori_klinis')->get();
+        $kategoriKliniss = KategoriKlinis::whereNull('deleted_at')->get();
+        // $kategoriKliniss = DB::table('kategori_klinis')->get();
         return view('admin.datakategoriklinis.index', compact('kategoriKliniss'));
     }
 
@@ -58,13 +58,13 @@ class DatakategoriklinisController extends Controller
     }
     protected function createkategoriklinis(array $data){
         try {
-            // return KategoriKlinis::create([
-            //     'nama_kategori_klinis' => normalize_name($data['nama_kategori_klinis']),
-            // ]);
-            $id = DB::table('kategori_klinis')->insertGetId([
+            return KategoriKlinis::create([
                 'nama_kategori_klinis' => normalize_name($data['nama_kategori_klinis']),
             ]);
-            return (object)['idkategori_klinis' => $id, 'nama_kategori_klinis' => normalize_name($data['nama_kategori_klinis'])];
+            // $id = DB::table('kategori_klinis')->insertGetId([
+            //     'nama_kategori_klinis' => normalize_name($data['nama_kategori_klinis']),
+            // ]);
+            // return (object)['idkategori_klinis' => $id, 'nama_kategori_klinis' => normalize_name($data['nama_kategori_klinis'])];
         } catch (\Exception $e) {
             throw new \Exception('Gagal menyimpan data kategori klinis: ' . $e->getMessage());
         }
@@ -77,23 +77,30 @@ class DatakategoriklinisController extends Controller
 
     public function edit($id)
     {
-        return redirect()->route('admin.datakategoriklinis.index')->with('info', 'Edit form not implemented yet.');
+        $kategori = KategoriKlinis::findOrFail($id);
+        return view('admin.datakategoriklinis.edit', compact('kategori'));
     }
 
     public function update(Request $request, $id)
     {
-        return redirect()->route('admin.datakategoriklinis.index')->with('info', 'Update not implemented yet.');
+        $validatedData = $this->validatekategoriklinis($request, $id);
+
+        $kategori = KategoriKlinis::findOrFail($id);
+        $kategori->nama_kategori_klinis = normalize_name($validatedData['nama_kategori_klinis']);
+        $kategori->save();
+
+        return redirect()->route('admin.datakategoriklinis.index')->with('success', 'Data kategori klinis berhasil diperbarui.');
     }
 
     public function destroy($id)
     {
-        // $kategori = KategoriKlinis::findOrFail($id);
-        // $kategori->delete();
-        $kategori = DB::table('kategori_klinis')->where('idkategori_klinis', $id)->first();
-        if (!$kategori) {
-            abort(404);
-        }
-        DB::table('kategori_klinis')->where('idkategori_klinis', $id)->delete();
+        $kategori = KategoriKlinis::findOrFail($id);
+        $kategori->delete();
+        // $kategori = DB::table('kategori_klinis')->where('idkategori_klinis', $id)->first();
+        // if (!$kategori) {
+        //     abort(404);
+        // }
+        // DB::table('kategori_klinis')->where('idkategori_klinis', $id)->delete();
         return redirect()->route('admin.datakategoriklinis.index')->with('success', 'Data deleted.');
     }
 }

@@ -17,8 +17,8 @@
                     <div class="mb-3">
                         <label class="form-label" for="jenis_kelamin">Jenis Kelamin</label>
                         <select id="jenis_kelamin" name="jenis_kelamin" class="form-select">
-                            <option value="Jantan" @if(old('jenis_kelamin')=='Jantan') selected @endif>Jantan</option>
-                            <option value="Betina" @if(old('jenis_kelamin')=='Betina') selected @endif>Betina</option>
+                            <option value="J" @if(old('jenis_kelamin')=='J') selected @endif>Jantan</option>
+                            <option value="B" @if(old('jenis_kelamin')=='B') selected @endif>Betina</option>
                         </select>
                         @error('jenis_kelamin')<div class="text-danger small">{{ $message }}</div>@enderror
                     </div>
@@ -37,11 +37,13 @@
 
                     <div class="mb-3">
                         <label class="form-label" for="idpemilik">Pemilik</label>
-                        <select id="idpemilik" name="idpemilik" class="form-select">
+                        <input type="text" id="pemilik_search" name="pemilik_search" class="form-control" list="pemilik_list" placeholder="Ketik nama pemilik..." autocomplete="off">
+                        <datalist id="pemilik_list">
                             @foreach($pemiliks as $pm)
-                                <option value="{{ $pm->idpemilik }}">{{ $pm->nama_user ?? $pm->iduser }}</option>
+                                <option value="{{ $pm->user->nama ?? 'N/A' }}" data-id="{{ $pm->idpemilik }}">
                             @endforeach
-                        </select>
+                        </datalist>
+                        <input type="hidden" id="idpemilik" name="idpemilik">
                         @error('idpemilik')<div class="text-danger small">{{ $message }}</div>@enderror
                     </div>
 
@@ -49,7 +51,7 @@
                         <label class="form-label" for="idras_hewan">Ras Hewan</label>
                         <select id="idras_hewan" name="idras_hewan" class="form-select">
                             @foreach($rasHewans as $r)
-                                <option value="{{ $r->idras_hewan }}">{{ $r->nama_ras }} ({{ $r->nama_jenis_hewan ?? '' }})</option>
+                                <option value="{{ $r->idras_hewan }}">{{ $r->nama_ras }} ({{ $r->jenisHewan->nama_jenis_hewan ?? '' }})</option>
                             @endforeach
                         </select>
                         @error('idras_hewan')<div class="text-danger small">{{ $message }}</div>@enderror
@@ -63,4 +65,11 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.getElementById('pemilik_search').addEventListener('input', function() {
+            const selectedOption = Array.from(document.querySelectorAll('#pemilik_list option')).find(option => option.value === this.value);
+            document.getElementById('idpemilik').value = selectedOption ? selectedOption.getAttribute('data-id') : '';
+        });
+    </script>
 @endsection

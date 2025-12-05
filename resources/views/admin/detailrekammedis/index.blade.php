@@ -3,8 +3,8 @@
 @section('page-title', request('rekam_medis') ? 'Detail Tindakan Rekam Medis ' . request('rekam_medis') : 'Detail Rekam Medis')
 
 @section('breadcrumb')
-<li class="breadcrumb-item"><a href="{{ route('dokter.dashboard') }}">Dashboard</a></li>
-<li class="breadcrumb-item"><a href="{{ route('dokter.datarekammedis.index') }}">Data Rekam Medis</a></li>
+<li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+<li class="breadcrumb-item"><a href="{{ route('admin.datatindakan.index') }}">Data Rekam Medis</a></li>
 <li class="breadcrumb-item active">Detail Rekam Medis</li>
 @endsection
 
@@ -13,7 +13,7 @@
     <div class="row">
         <div class="col-12">
             <div class="card">
-                
+
                 <div class="card-body table-responsive">
                     <table class="table table-striped table-sm actions align-middle">
                         <thead>
@@ -41,8 +41,8 @@
                                     <td>{{ $d->kodeTindakanTerapi->kategoriKlinis->nama_kategori_klinis ?? '-' }}</td>
                                     <td title="{{ $d->detail }}">{{ Str::limit($d->detail, 30) }}</td>
                                     <td class="actions">
-                                        <a href="{{ route('dokter.detailrekammedis.edit', $d->iddetail_rekam_medis) }}" class="btn btn-sm btn-warning btn-admin sm">Edit</a>
-                                        <form action="{{ route('dokter.detailrekammedis.destroy', $d->iddetail_rekam_medis) }}" method="POST" class="d-inline">
+                                        <a href="{{ route('admin.detailrekammedis.edit', $d->iddetail_rekam_medis) }}" class="btn btn-sm btn-warning btn-admin sm">Edit</a>
+                                        <form action="{{ route('admin.detailrekammedis.destroy', $d->iddetail_rekam_medis) }}" method="POST" class="d-inline">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-sm btn-danger btn-admin sm" onclick="return confirm('Are you sure?')">Delete</button>

@@ -28,7 +28,7 @@
                                     <td>{{ $pet->tanggal_lahir }}</td>
                                     <td>{{ $pet->warna_tanda }}</td>
                                     <td>{{ $pet->jenis_kelamin }}</td>
-                                    <td>{{ $pet->nama_ras ?? 'N/A' }}</td>
+                                    <td>{{ $pet->rasHewan->nama_ras ?? 'N/A' }}</td>
                                 </tr>
                                 @endforeach
                             </tbody>

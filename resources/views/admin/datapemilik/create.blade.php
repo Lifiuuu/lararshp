@@ -33,6 +33,49 @@
                             </div>
 
                             <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" 
+                                       class="form-control @error('email') is-invalid @enderror" 
+                                       id="email" 
+                                       name="email" 
+                                       value="{{ old('email') }}" 
+                                       placeholder="Masukkan email"
+                                       required>
+
+                                @error('email')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <input type="password" 
+                                       class="form-control @error('password') is-invalid @enderror" 
+                                       id="password" 
+                                       name="password" 
+                                       placeholder="Masukkan password"
+                                       required>
+
+                                @error('password')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="form-group">
+                                <label for="password_confirmation">Konfirmasi Password</label>
+                                <input type="password" 
+                                       class="form-control @error('password_confirmation') is-invalid @enderror" 
+                                       id="password_confirmation" 
+                                       name="password_confirmation" 
+                                       placeholder="Konfirmasi password"
+                                       required>
+
+                                @error('password_confirmation')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="form-group">
                                 <label for="alamat">Alamat</label>
                                 <input type="text" 
                                        class="form-control @error('alamat') is-invalid @enderror" 

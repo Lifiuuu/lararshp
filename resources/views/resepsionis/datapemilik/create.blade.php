@@ -9,6 +9,12 @@
                 @csrf
 
                 <div class="mb-3">
+                    <label class="form-label" for="nama">Nama</label>
+                    <input id="nama" name="nama" class="form-control" value="{{ old('nama') }}">
+                    @error('nama')<div class="text-danger small">{{ $message }}</div>@enderror
+                </div>
+
+                <div class="mb-3">
                     <label class="form-label" for="no_wa">No WA</label>
                     <input id="no_wa" name="no_wa" class="form-control" value="{{ old('no_wa') }}">
                     @error('no_wa')<div class="text-danger small">{{ $message }}</div>@enderror
@@ -21,14 +27,21 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label" for="iduser">User (opsional)</label>
-                    <select id="iduser" name="iduser" class="form-select">
-                        <option value="">-- pilih --</option>
-                        @foreach($users as $u)
-                            <option value="{{ $u->iduser }}">{{ $u->nama }} ({{ $u->email }})</option>
-                        @endforeach
-                    </select>
-                    @error('iduser')<div class="text-danger small">{{ $message }}</div>@enderror
+                    <label class="form-label" for="email">Email</label>
+                    <input id="email" name="email" type="email" class="form-control" value="{{ old('email') }}">
+                    @error('email')<div class="text-danger small">{{ $message }}</div>@enderror
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="password">Password</label>
+                    <input id="password" name="password" type="password" class="form-control">
+                    @error('password')<div class="text-danger small">{{ $message }}</div>@enderror
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="password_confirmation">Konfirmasi Password</label>
+                    <input id="password_confirmation" name="password_confirmation" type="password" class="form-control">
+                    @error('password_confirmation')<div class="text-danger small">{{ $message }}</div>@enderror
                 </div>
 
                 <div class="d-flex justify-content-between">

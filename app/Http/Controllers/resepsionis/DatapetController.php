@@ -5,32 +5,31 @@ namespace App\Http\Controllers\resepsionis;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\Pet;
+use App\Models\Pemilik;
+use App\Models\RasHewan;
 
 class DatapetController extends Controller
 {
     public function index()
     {
-        $pets = DB::table('pet as p')
-            ->leftJoin('pemilik as pm', 'p.idpemilik', '=', 'pm.idpemilik')
-            ->leftJoin('user as u', 'pm.iduser', '=', 'u.iduser')
-            ->leftJoin('ras_hewan as r', 'p.idras_hewan', '=', 'r.idras_hewan')
-            ->select('p.*', 'u.nama as nama_pemilik', 'pm.no_wa as pemilik_no_wa', 'r.nama_ras')
-            ->get();
+        $pets = Pet::with('pemilik.user', 'rasHewan')->get();
+
+        // $pets = DB::table('pet as p')
+        //     ->leftJoin('pemilik as pm', 'p.idpemilik', '=', 'pm.idpemilik')
+        //     ->leftJoin('user as u', 'pm.iduser', '=', 'u.iduser')
+        //     ->leftJoin('ras_hewan as r', 'p.idras_hewan', '=', 'r.idras_hewan')
+        //     ->select('p.*', 'u.nama as nama_pemilik', 'pm.no_wa as pemilik_no_wa', 'r.nama_ras')
+        //     ->get();
 
         return view('resepsionis.datapet.index', compact('pets'));
     }
 
     public function create()
     {
-        $pemiliks = DB::table('pemilik')
-            ->leftJoin('user', 'pemilik.iduser', '=', 'user.iduser')
-            ->select('pemilik.*', 'user.nama as nama_user')
-            ->get();
+        $pemiliks = Pemilik::with('user')->get();
 
-        $rasHewans = DB::table('ras_hewan')
-            ->join('jenis_hewan', 'ras_hewan.idjenis_hewan', '=', 'jenis_hewan.idjenis_hewan')
-            ->select('ras_hewan.*', 'jenis_hewan.nama_jenis_hewan')
-            ->get();
+        $rasHewans = RasHewan::with('jenisHewan')->get();
 
         return view('resepsionis.datapet.create', compact('pemiliks', 'rasHewans'));
     }
@@ -39,7 +38,7 @@ class DatapetController extends Controller
     {
         $validatedData = $request->validate([
             'nama' => 'required|string|max:255|min:2',
-            'jenis_kelamin' => 'required|in:Jantan,Betina',
+            'jenis_kelamin' => 'required|in:J,B',
             'tanggal_lahir' => 'required|date|before_or_equal:today',
             'warna_tanda' => 'required|string|max:255',
             'idpemilik' => 'required|exists:pemilik,idpemilik',
@@ -48,25 +47,23 @@ class DatapetController extends Controller
 
         $validatedData['nama'] = normalize_name($validatedData['nama']);
 
-        DB::table('pet')->insert($validatedData);
+        Pet::create($validatedData);
+
+        // DB::table('pet')->insert($validatedData);
 
         return redirect()->route('resepsionis.datapet.index')->with('success', 'Data pet berhasil ditambahkan.');
     }
 
     public function edit($id)
     {
-        $pet = DB::table('pet')->where('idpet', $id)->first();
-        if (!$pet) abort(404);
+        $pet = Pet::findOrFail($id);
 
-        $pemiliks = DB::table('pemilik')
-            ->leftJoin('user', 'pemilik.iduser', '=', 'user.iduser')
-            ->select('pemilik.*', 'user.nama as nama_user')
-            ->get();
+        // $pet = DB::table('pet')->where('idpet', $id)->first();
+        // if (!$pet) abort(404);
 
-        $rasHewans = DB::table('ras_hewan')
-            ->join('jenis_hewan', 'ras_hewan.idjenis_hewan', '=', 'jenis_hewan.idjenis_hewan')
-            ->select('ras_hewan.*', 'jenis_hewan.nama_jenis_hewan')
-            ->get();
+        $pemiliks = Pemilik::with('user')->get();
+
+        $rasHewans = RasHewan::with('jenisHewan')->get();
 
         return view('resepsionis.datapet.edit', compact('pet', 'pemiliks', 'rasHewans'));
     }
@@ -75,7 +72,7 @@ class DatapetController extends Controller
     {
         $validatedData = $request->validate([
             'nama' => 'required|string|max:255|min:2',
-            'jenis_kelamin' => 'required|in:Jantan,Betina',
+            'jenis_kelamin' => 'required|in:J,B',
             'tanggal_lahir' => 'required|date|before_or_equal:today',
             'warna_tanda' => 'required|string|max:255',
             'idpemilik' => 'required|exists:pemilik,idpemilik',
@@ -84,19 +81,24 @@ class DatapetController extends Controller
 
         $validatedData['nama'] = normalize_name($validatedData['nama']);
 
-        $pet = DB::table('pet')->where('idpet', $id)->first();
-        if (!$pet) abort(404);
+        $pet = Pet::findOrFail($id);
+        $pet->update($validatedData);
 
-        DB::table('pet')->where('idpet', $id)->update($validatedData);
+        // $pet = DB::table('pet')->where('idpet', $id)->first();
+        // if (!$pet) abort(404);
+
+        // DB::table('pet')->where('idpet', $id)->update($validatedData);
 
         return redirect()->route('resepsionis.datapet.index')->with('success', 'Data pet diperbarui.');
     }
 
     public function destroy($id)
     {
-        $pet = DB::table('pet')->where('idpet', $id)->first();
-        if (!$pet) abort(404);
-        DB::table('pet')->where('idpet', $id)->delete();
+        Pet::findOrFail($id)->delete();
+
+        // $pet = DB::table('pet')->where('idpet', $id)->first();
+        // if (!$pet) abort(404);
+        // DB::table('pet')->where('idpet', $id)->delete();
         return redirect()->route('resepsionis.datapet.index')->with('success', 'Data deleted.');
     }
 }

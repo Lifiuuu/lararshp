@@ -7,18 +7,18 @@
             <div class="card-body">
                 <h5>Patient</h5>
                 <p>
-                    <strong>Pet:</strong> {{ $rekam->nama_pet ?? '-' }}<br>
+                    <strong>Pet:</strong> {{ $rekam->temuDokter->pet->nama ?? '-' }}<br>
                     <strong>Jenis kelamin:</strong>
                     @php
-                        $jk = $rekam->jenis_kelamin ?? null;
+                        $jk = $rekam->temuDokter->pet->jenis_kelamin ?? null;
                         $jkLabel = $jk === 'J' ? 'Jantan' : ($jk === 'B' ? 'Betina' : '-');
                     @endphp
                     {{ $jkLabel }} <span class="small text-muted">({{ $jk ?? '-' }})</span><br>
-                    <strong>Warna tanda:</strong> {{ $rekam->warna_tanda ?? '-' }}<br>
-                    <strong>Tanggal Lahir:</strong> {{ optional(\Carbon\Carbon::parse($rekam->tanggal_lahir ?? null))->format('Y-m-d') ?? '-' }}<br>
-                    <strong>Owner:</strong> {{ $rekam->nama_pemilik ?? '-' }} ({{ $rekam->pemilik_no_wa ?? '-' }})<br>
-                    <strong>Dokter:</strong> {{ $rekam->nama_dokter ?? '-' }}<br>
-                    <strong>Waktu:</strong> {{ optional(\Carbon\Carbon::parse($rekam->waktu_daftar ?? $rekam->created_at))->format('Y-m-d H:i') ?? '-' }}
+                    <strong>Warna tanda:</strong> {{ $rekam->temuDokter->pet->warna_tanda ?? '-' }}<br>
+                    <strong>Tanggal Lahir:</strong> {{ optional(\Carbon\Carbon::parse($rekam->temuDokter->pet->tanggal_lahir ?? null))->format('Y-m-d') ?? '-' }}<br>
+                    <strong>Owner:</strong> {{ $rekam->temuDokter->pet->pemilik->user->nama ?? '-' }} ({{ $rekam->temuDokter->pet->pemilik->no_wa ?? '-' }})<br>
+                    <strong>Dokter:</strong> {{ $rekam->roleUser->user->nama ?? '-' }}<br>
+                    <strong>Waktu:</strong> {{ optional(\Carbon\Carbon::parse($rekam->temuDokter->waktu_daftar ?? $rekam->created_at))->format('Y-m-d H:i') ?? '-' }}
                 </p>
 
                 <h5>Clinical</h5>
@@ -43,8 +43,8 @@
                             @forelse($details as $i => $d)
                                 <tr>
                                     <td>{{ $i + 1 }}</td>
-                                    <td>{{ $d->kode ?? '-' }}</td>
-                                    <td>{{ $d->deskripsi_tindakan_terapi ?? '-' }}</td>
+                                    <td>{{ $d->kodeTindakanTerapi->kode ?? '-' }}</td>
+                                    <td>{{ $d->kodeTindakanTerapi->deskripsi_tindakan_terapi ?? '-' }}</td>
                                     <td>{{ $d->detail ?? '-' }}</td>
                                 </tr>
                             @empty

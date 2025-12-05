@@ -4,9 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class DataUser extends Authenticatable
 {
+    use SoftDeletes;
+
     protected $table = 'user';
     protected $primaryKey = 'iduser';
     public $incrementing = true;
@@ -14,6 +17,19 @@ class DataUser extends Authenticatable
     protected $fillable = ['nama', 'email', 'password'];
     protected $hidden = ['password'];
     public $timestamps = false;
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($model) {
+            $userId = session('user_id');
+            if ($userId) {
+                $model->deleted_by = $userId;
+                $model->save();
+            }
+        });
+    }
 
     public function pemilik()
     {

@@ -31,6 +31,8 @@ Route::prefix('admin')->name('admin.')->middleware(['administrator'])->group(fun
     Route::resource('datapet', App\Http\Controllers\Admin\DatapetController::class);
     Route::resource('datarekammedis', App\Http\Controllers\Admin\DatarekammedisController::class);
     Route::resource('datatindakan', App\Http\Controllers\Admin\DatatindakanController::class);
+    Route::get('detailrekammedis/create/{idrekam}', [App\Http\Controllers\Admin\DetailrekammedisController::class, 'create'])->name('detailrekammedis.create');
+    Route::resource('detailrekammedis', App\Http\Controllers\Admin\DetailrekammedisController::class)->except(['create']);
     Route::resource('temudokter', App\Http\Controllers\Admin\TemudokterController::class);
     Route::resource('jenishewan', App\Http\Controllers\Admin\JenishewanController::class);
     Route::resource('manajemenrole', App\Http\Controllers\Admin\ManajemenroleController::class);

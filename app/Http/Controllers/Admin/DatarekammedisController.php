@@ -4,138 +4,126 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\RekamMedis;
 use Illuminate\Support\Facades\DB;
+use App\Models\RekamMedis;
+use App\Models\TemuDokter;
+use Carbon\Carbon;
 
 class DatarekammedisController extends Controller
 {
     public function index()
     {
-        // $rekamMediss = RekamMedis::with('temuDokter.pet', 'roleUser.user')->get();
-        $rekamMediss = DB::table('rekam_medis')
-            ->join('temu_dokter', 'rekam_medis.idreservasi_dokter', '=', 'temu_dokter.idreservasi_dokter')
-            ->join('pet', 'temu_dokter.idpet', '=', 'pet.idpet')
-            ->join('role_user', 'rekam_medis.dokter_pemeriksa', '=', 'role_user.idrole_user')
-            ->join('user', 'role_user.iduser', '=', 'user.iduser')
-                ->select('rekam_medis.*', 'pet.nama as nama_pet', 'user.nama as nama_dokter', 'temu_dokter.waktu_daftar as waktu_daftar')
-            ->orderBy('rekam_medis.created_at', 'desc')
+        // Use Eloquent: join to allow ordering by temu_dokter.waktu_daftar, eager load relations for the view
+        $rekamMediss = RekamMedis::join('temu_dokter', 'rekam_medis.idreservasi_dokter', '=', 'temu_dokter.idreservasi_dokter')
+            ->where('temu_dokter.status', '!=', 'D')
+            ->orderBy('temu_dokter.waktu_daftar', 'desc')
+            ->select('rekam_medis.*')
+            ->with('temuDokter.pet.pemilik.user', 'roleUser.user')
             ->get();
+
         return view('admin.datarekammedis.index', compact('rekamMediss'));
     }
 
     public function create()
     {
-        // $temuDokters = \App\Models\TemuDokter::with('pet')->get();
-        $temuDokters = DB::table('temu_dokter')
-            ->join('pet', 'temu_dokter.idpet', '=', 'pet.idpet')
-            ->where('temu_dokter.status', 'P') // only show pending reservations
-            ->select('temu_dokter.*', 'pet.nama as nama_pet')
-            ->orderBy('temu_dokter.waktu_daftar', 'asc')
-            ->get();
-        
-        // $dokters = \App\Models\RoleUser::with('user')->whereHas('role', function($q) {
-        //     $q->where('nama_role', 'Dokter');
-        // })->get();
-        $dokters = DB::table('role_user')
-            ->join('user', 'role_user.iduser', '=', 'user.iduser')
-            ->join('role', 'role_user.idrole', '=', 'role.idrole')
-            ->where('role.nama_role', 'Dokter')
-            ->select('role_user.*', 'user.nama as nama_user')
-            ->get();
-        return view('admin.datarekammedis.create', compact('temuDokters', 'dokters'));
+        // Get temu_dokter with status 'P' and not already in rekam_medis
+        $temuDokters = TemuDokter::with('pet.pemilik.user')
+            ->where('status', 'P')
+            ->whereDate('waktu_daftar', Carbon::today()->toDateString())
+            ->whereNotIn('idreservasi_dokter', RekamMedis::pluck('idreservasi_dokter'))
+            ->get()
+            ->map(function($temu) {
+                $temu->nama_pet = $temu->pet->nama ?? '';
+                $temu->nama_pemilik = $temu->pet->pemilik->user->nama ?? '';
+                return $temu;
+            });
+
+        return view('admin.datarekammedis.create', compact('temuDokters'));
     }
 
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
+        $validated = $request->validate([
             'idreservasi_dokter' => 'required|exists:temu_dokter,idreservasi_dokter',
-            'dokter_pemeriksa' => 'required|exists:role_user,idrole_user',
             'anamnesa' => 'required|string',
             'temuan_klinis' => 'required|string',
             'diagnosa' => 'required|string',
         ]);
 
-    // Normalize text fields using helper for consistent formatting
-    $validatedData['anamnesa'] = normalize_name($validatedData['anamnesa']);
-    $validatedData['temuan_klinis'] = normalize_name($validatedData['temuan_klinis']);
-    $validatedData['diagnosa'] = normalize_name($validatedData['diagnosa']);
+        // Get dokter_pemeriksa from temu_dokter
+        $temu = TemuDokter::findOrFail($validated['idreservasi_dokter']);
 
-    $validatedData['created_at'] = now();
+        // $temu = DB::table('temu_dokter')->where('idreservasi_dokter', $validated['idreservasi_dokter'])->first();
+        // if (!$temu) {
+        //     return redirect()->back()->withErrors(['idreservasi_dokter' => 'Reservasi tidak ditemukan.']);
+        // }
 
-    // RekamMedis::create($validatedData);
-    DB::table('rekam_medis')->insert($validatedData);
+        $validated['dokter_pemeriksa'] = $temu->idrole_user;
+        $validated['anamnesa'] = normalize_name($validated['anamnesa']);
+        $validated['temuan_klinis'] = normalize_name($validated['temuan_klinis']);
+        $validated['diagnosa'] = normalize_name($validated['diagnosa']);
+        $validated['created_at'] = now();
 
-        return redirect()->route('admin.datarekammedis.index')->with('success', 'Rekam medis berhasil ditambahkan.');
-    }
+        RekamMedis::create($validated);
 
-    public function show($id)
-    {
-        return redirect()->route('admin.datarekammedis.index')->with('info', 'Show not implemented yet.');
+        // DB::table('rekam_medis')->insert($validated);
+
+        return redirect()->route('admin.datarekammedis.index')->with('success', 'Rekam medis dibuat.');
     }
 
     public function edit($id)
     {
-        $rekam = DB::table('rekam_medis')->where('idrekam_medis', $id)->first();
-        if (!$rekam) {
-            abort(404);
-        }
+        $rekam = RekamMedis::findOrFail($id);
 
-        // include pending reservations and the current one (even if not pending)
-        $temuDokters = DB::table('temu_dokter')
-            ->join('pet', 'temu_dokter.idpet', '=', 'pet.idpet')
-            ->where(function($q) use ($rekam) {
-                $q->where('temu_dokter.status', 'P');
-                $q->orWhere('temu_dokter.idreservasi_dokter', $rekam->idreservasi_dokter);
-            })
-            ->select('temu_dokter.*', 'pet.nama as nama_pet')
-            ->orderBy('temu_dokter.waktu_daftar', 'asc')
-            ->get();
+        // $rekam = DB::table('rekam_medis')->where('idrekam_medis', $id)->first();
+        // if (!$rekam) abort(404);
 
-        $dokters = DB::table('role_user')
-            ->join('user', 'role_user.iduser', '=', 'user.iduser')
-            ->join('role', 'role_user.idrole', '=', 'role.idrole')
-            ->where('role.nama_role', 'Dokter')
-            ->select('role_user.*', 'user.nama as nama_user')
-            ->get();
+        $temu = $rekam->temuDokter;
 
-        return view('admin.datarekammedis.edit', compact('rekam', 'temuDokters', 'dokters'));
+        // $temu = DB::table('temu_dokter')->where('idreservasi_dokter', $rekam->idreservasi_dokter)->first();
+
+        // Get dokter name
+        $dokter = $rekam->roleUser->user ?? null;
+
+        // $dokter = DB::table('role_user')
+        //     ->join('user', 'role_user.iduser', '=', 'user.iduser')
+        //     ->where('role_user.idrole_user', $rekam->dokter_pemeriksa)
+        //     ->select('user.nama as nama_dokter')
+        //     ->first();
+
+        return view('admin.datarekammedis.edit', compact('rekam', 'temu', 'dokter'));
     }
 
     public function update(Request $request, $id)
     {
-        $rekam = DB::table('rekam_medis')->where('idrekam_medis', $id)->first();
-        if (!$rekam) {
-            abort(404);
-        }
-
-        $validatedData = $request->validate([
-            'idreservasi_dokter' => 'required|exists:temu_dokter,idreservasi_dokter',
-            'dokter_pemeriksa' => 'required|exists:role_user,idrole_user',
+        $validated = $request->validate([
             'anamnesa' => 'required|string',
             'temuan_klinis' => 'required|string',
             'diagnosa' => 'required|string',
         ]);
 
-        $validatedData['anamnesa'] = normalize_name($validatedData['anamnesa']);
-        $validatedData['temuan_klinis'] = normalize_name($validatedData['temuan_klinis']);
-        $validatedData['diagnosa'] = normalize_name($validatedData['diagnosa']);
+        $validated['anamnesa'] = normalize_name($validated['anamnesa']);
+        $validated['temuan_klinis'] = normalize_name($validated['temuan_klinis']);
+        $validated['diagnosa'] = normalize_name($validated['diagnosa']);
 
-        $validatedData['updated_at'] = now();
+        $rekam = RekamMedis::findOrFail($id);
+        $rekam->update($validated);
 
-        DB::table('rekam_medis')->where('idrekam_medis', $id)->update($validatedData);
+        // $exists = DB::table('rekam_medis')->where('idrekam_medis', $id)->first();
+        // if (!$exists) abort(404);
 
-        return redirect()->route('admin.datarekammedis.index')->with('success', 'Rekam medis berhasil diperbarui.');
+        // DB::table('rekam_medis')->where('idrekam_medis', $id)->update($validated);
+
+        return redirect()->route('admin.datarekammedis.index')->with('success', 'Rekam medis diperbarui.');
     }
 
     public function destroy($id)
     {
-        // $rekam = RekamMedis::findOrFail($id);
-        // $rekam->delete();
-        $rekam = DB::table('rekam_medis')->where('idrekam_medis', $id)->first();
-        if (!$rekam) {
-            abort(404);
-        }
-        DB::table('rekam_medis')->where('idrekam_medis', $id)->delete();
-        return redirect()->route('admin.datarekammedis.index')->with('success', 'Data deleted.');
+        RekamMedis::findOrFail($id)->delete();
+
+        // $exists = DB::table('rekam_medis')->where('idrekam_medis', $id)->first();
+        // if (!$exists) abort(404);
+        // DB::table('rekam_medis')->where('idrekam_medis', $id)->delete();
+        return redirect()->route('admin.datarekammedis.index')->with('success', 'Rekam medis dihapus.');
     }
 }

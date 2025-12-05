@@ -18,8 +18,8 @@
                     <div class="mb-3">
                         <label class="form-label" for="jenis_kelamin">Jenis Kelamin</label>
                         <select id="jenis_kelamin" name="jenis_kelamin" class="form-select">
-                            <option value="Jantan" @if(old('jenis_kelamin',$pet->jenis_kelamin)=='Jantan') selected @endif>Jantan</option>
-                            <option value="Betina" @if(old('jenis_kelamin',$pet->jenis_kelamin)=='Betina') selected @endif>Betina</option>
+                            <option value="J" @if(old('jenis_kelamin',$pet->jenis_kelamin)=='J') selected @endif>Jantan</option>
+                            <option value="B" @if(old('jenis_kelamin',$pet->jenis_kelamin)=='B') selected @endif>Betina</option>
                         </select>
                         @error('jenis_kelamin')<div class="text-danger small">{{ $message }}</div>@enderror
                     </div>
@@ -40,7 +40,7 @@
                         <label class="form-label" for="idpemilik">Pemilik</label>
                         <select id="idpemilik" name="idpemilik" class="form-select">
                             @foreach($pemiliks as $pm)
-                                <option value="{{ $pm->idpemilik }}" @if($pet->idpemilik == $pm->idpemilik) selected @endif>{{ $pm->nama_user ?? $pm->iduser }}</option>
+                                <option value="{{ $pm->idpemilik }}" @if($pet->idpemilik == $pm->idpemilik) selected @endif>{{ $pm->user->nama ?? 'N/A' }}</option>
                             @endforeach
                         </select>
                         @error('idpemilik')<div class="text-danger small">{{ $message }}</div>@enderror
@@ -50,7 +50,7 @@
                         <label class="form-label" for="idras_hewan">Ras Hewan</label>
                         <select id="idras_hewan" name="idras_hewan" class="form-select">
                             @foreach($rasHewans as $r)
-                                <option value="{{ $r->idras_hewan }}" @if($pet->idras_hewan == $r->idras_hewan) selected @endif>{{ $r->nama_ras }} ({{ $r->nama_jenis_hewan ?? '' }})</option>
+                                <option value="{{ $r->idras_hewan }}" @if($pet->idras_hewan == $r->idras_hewan) selected @endif>{{ $r->nama_ras }} ({{ $r->jenisHewan->nama_jenis_hewan ?? '' }})</option>
                             @endforeach
                         </select>
                         @error('idras_hewan')<div class="text-danger small">{{ $message }}</div>@enderror

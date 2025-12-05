@@ -26,7 +26,7 @@
                                 @foreach($pemiliks as $index => $pemilik)
                                 <tr>
                                     <td class="text-center">{{ $index + 1 }}</td>
-                                    <td>{{ $pemilik->nama_user ?? 'N/A' }}</td>
+                                    <td>{{ $pemilik->user->nama ?? 'N/A' }}</td>
                                     <td>{{ $pemilik->no_wa ?? '' }}</td>
                                     <td>{{ $pemilik->alamat ?? '' }}</td>
                                     <td class="text-center actions">

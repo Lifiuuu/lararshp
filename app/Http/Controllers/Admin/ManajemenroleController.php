@@ -11,8 +11,8 @@ class ManajemenroleController extends Controller
 {
     public function index()
     {
-        // $roles = Role::all();
-        $roles = DB::table('role')->get();
+        $roles = Role::whereNull('deleted_at')->get();
+        // $roles = DB::table('role')->get();
         return view('admin.manajemenrole.index', compact('roles'));
     }
 
@@ -29,8 +29,8 @@ class ManajemenroleController extends Controller
 
         $validatedData['nama_role'] = normalize_name($validatedData['nama_role']);
 
-        // Role::create($validatedData);
-        DB::table('role')->insert($validatedData);
+        Role::create($validatedData);
+        // DB::table('role')->insert($validatedData);
 
         return redirect()->route('admin.manajemenrole.index')->with('success', 'Role berhasil ditambahkan.');
     }
@@ -42,23 +42,34 @@ class ManajemenroleController extends Controller
 
     public function edit($id)
     {
-        return redirect()->route('admin.manajemenrole.index')->with('info', 'Edit form not implemented yet.');
+        $role = Role::findOrFail($id);
+        return view('admin.manajemenrole.edit', compact('role'));
     }
 
     public function update(Request $request, $id)
     {
-        return redirect()->route('admin.manajemenrole.index')->with('info', 'Update not implemented yet.');
+        $validatedData = $request->validate([
+            'nama_role' => 'required|string|max:255|min:3|unique:role,nama_role,' . $id . ',idrole',
+        ]);
+
+        $validatedData['nama_role'] = normalize_name($validatedData['nama_role']);
+
+        $role = Role::findOrFail($id);
+        $role->nama_role = $validatedData['nama_role'];
+        $role->save();
+
+        return redirect()->route('admin.manajemenrole.index')->with('success', 'Role berhasil diperbarui.');
     }
 
     public function destroy($id)
     {
-        // $role = Role::findOrFail($id);
-        // $role->delete();
-        $role = DB::table('role')->where('idrole', $id)->first();
-        if (!$role) {
-            abort(404);
-        }
-        DB::table('role')->where('idrole', $id)->delete();
+        $role = Role::findOrFail($id);
+        $role->delete();
+        // $role = DB::table('role')->where('idrole', $id)->first();
+        // if (!$role) {
+        //     abort(404);
+        // }
+        // DB::table('role')->where('idrole', $id)->delete();
         return redirect()->route('admin.manajemenrole.index')->with('success', 'Role deleted.');
     }
 }

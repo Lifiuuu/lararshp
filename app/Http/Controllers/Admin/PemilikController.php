@@ -10,7 +10,7 @@ class PemilikController extends Controller
 {
     public function index()
     {
-        $pemiliks = Pemilik::with('user')->get();
+        $pemiliks = Pemilik::with('user')->whereHas('user', fn($q) => $q->whereNull('deleted_at'))->get();
         return view('admin.pemilik.index', compact('pemiliks'));
     }
 

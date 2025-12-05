@@ -3,15 +3,31 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Pemilik extends Model
 {
+    use SoftDeletes;
+
     protected $table = 'pemilik';
     protected $primaryKey = 'idpemilik';
     public $incrementing = true;
     protected $keyType = 'int';
     protected $fillable = ['no_wa', 'alamat', 'iduser'];
     public $timestamps = false;
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($model) {
+            $userId = session('user_id');
+            if ($userId) {
+                $model->deleted_by = $userId;
+                $model->save();
+            }
+        });
+    }
 
     public function user()
     {

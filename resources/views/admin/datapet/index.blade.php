@@ -27,7 +27,7 @@
                         @php
                             // Group pets by owner name (controller provides flat fields `nama_pemilik` and `pemilik_no_wa`)
                             $groups = $pets->groupBy(function($p) {
-                                return $p->nama_pemilik ?? $p->pemilik_no_wa ?? 'N/A';
+                                return $p->pemilik->user->nama ?? $p->pemilik->no_wa ?? 'N/A';
                             });
                             $rowNumber = 0;
                         @endphp
@@ -47,10 +47,10 @@
                                         <td rowspan="{{ $count }}">{{ $pemilikName }}</td>
                                     @endif
 
-                                    <td>{{ $pet->nama_ras ?? 'N/A' }}</td>
+                                    <td>{{ $pet->rasHewan->nama_ras ?? 'N/A' }}</td>
                                     <td class="text-center actions">
-                                        <a href="{{ route('admin.datapet.edit', $pet->id ?? $pet->idpet) }}" class="btn btn-sm btn-warning me-1 btn-admin sm">Edit</a>
-                                        <form action="{{ route('admin.datapet.destroy', $pet->id ?? $pet->idpet) }}" method="POST" style="display:inline-block" onsubmit="return confirm('Hapus data pet ini?')">
+                                        <a href="{{ route('admin.datapet.edit', $pet->idpet) }}" class="btn btn-sm btn-warning me-1 btn-admin sm">Edit</a>
+                                        <form action="{{ route('admin.datapet.destroy', $pet->idpet) }}" method="POST" style="display:inline-block" onsubmit="return confirm('Hapus data pet ini?')">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-sm btn-danger btn-admin sm">Hapus</button>

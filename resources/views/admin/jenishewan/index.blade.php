@@ -24,8 +24,8 @@
                             <td class="text-center">{{ $index + 1 }}</td>
                             <td>{{ $jenisHewan->nama_jenis_hewan }}</td>
                             <td class="text-center actions">
-                                <a href="{{ route('admin.jenishewan.edit', $jenisHewan->id ?? $jenisHewan->kode ?? $jenisHewan->nama_jenis_hewan) }}" class="btn btn-sm btn-warning me-1 btn-admin sm">Edit</a>
-                                <form action="{{ route('admin.jenishewan.destroy', $jenisHewan->id ?? $jenisHewan->kode ?? $jenisHewan->nama_jenis_hewan) }}" method="POST" style="display:inline-block" onsubmit="return confirm('Hapus jenis hewan ini?')">
+                                <a href="{{ route('admin.jenishewan.edit', $jenisHewan->idjenis_hewan) }}" class="btn btn-sm btn-warning me-1 btn-admin sm">Edit</a>
+                                <form action="{{ route('admin.jenishewan.destroy', $jenisHewan->idjenis_hewan) }}" method="POST" style="display:inline-block" onsubmit="return confirm('Hapus jenis hewan ini?')">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-sm btn-danger btn-admin sm">Hapus</button>

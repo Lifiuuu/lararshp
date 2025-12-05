@@ -12,7 +12,6 @@
             <table class="table table-striped table-sm actions align-middle">
                 <thead>
                     <tr>
-                        <th>No</th>
                         <th>Nama</th>
                         <th>No WA</th>
                         <th>Aksi</th>
@@ -21,8 +20,7 @@
                 <tbody>
                     @foreach($pemiliks as $p)
                         <tr>
-                            <td>{{ $p->idpemilik }}</td>
-                            <td>{{ $p->user_nama ?? '—' }}</td>
+                            <td>{{ $p->user->nama ?? '—' }}</td>
                             <td>{{ $p->no_wa }}</td>
                             <td class="actions">
                                 <a href="{{ route('resepsionis.datapemilik.edit', $p->idpemilik) }}" class="btn btn-sm btn-secondary btn-admin sm">Edit</a>

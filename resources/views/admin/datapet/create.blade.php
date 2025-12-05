@@ -41,8 +41,8 @@
                                         name="jenis_kelamin" 
                                         required>
                                     <option value="">Pilih Jenis Kelamin</option>
-                                    <option value="Jantan" {{ old('jenis_kelamin') == 'Jantan' ? 'selected' : '' }}>Jantan</option>
-                                    <option value="Betina" {{ old('jenis_kelamin') == 'Betina' ? 'selected' : '' }}>Betina</option>
+                                    <option value="J" {{ old('jenis_kelamin') == 'J' ? 'selected' : '' }}>Jantan</option>
+                                    <option value="B" {{ old('jenis_kelamin') == 'B' ? 'selected' : '' }}>Betina</option>
                                 </select>
                             
                                 @error('jenis_kelamin')

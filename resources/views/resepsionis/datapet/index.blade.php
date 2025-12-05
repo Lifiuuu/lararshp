@@ -12,8 +12,8 @@
             <table class="table table-striped table-sm actions align-middle">
                 <thead>
                     <tr>
-                        <th>No</th>
                         <th>Nama</th>
+                        <th>Ras Hewan</th>
                         <th>Pemilik</th>
                         <th>Aksi</th>
                     </tr>
@@ -21,9 +21,9 @@
                 <tbody>
                     @foreach($pets as $pet)
                         <tr>
-                            <td>{{ $pet->idpet }}</td>
                             <td>{{ $pet->nama }}</td>
-                            <td>{{ $pet->nama_pemilik ?? '—' }}</td>
+                            <td>{{ $pet->rasHewan->nama_ras ?? '—' }}</td>
+                            <td>{{ $pet->pemilik->user->nama ?? '—' }}</td>
                             <td class="actions">
                                 <a href="{{ route('resepsionis.datapet.edit', $pet->idpet) }}" class="btn btn-sm btn-secondary btn-admin sm">Edit</a>
                                 <form action="{{ route('resepsionis.datapet.destroy', $pet->idpet) }}" method="POST" style="display:inline-block; margin-left:6px;" onsubmit="return confirm('Hapus pet ini?')">

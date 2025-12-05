@@ -85,19 +85,17 @@
                         <table class="table table-striped table-sm">
                             <thead>
                                 <tr>
-                                    <th>#</th>
                                     <th>Pet</th>
                                     <th>Dokter</th>
                                     <th>Waktu</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach(array_slice($data['rekamMediss']->toArray() ?? [], 0, 8) as $i => $r)
+                                @foreach($data['rekamMediss']->take(8) ?? collect() as $i => $r)
                                     <tr>
-                                        <td>{{ $i + 1 }}</td>
-                                        <td>{{ $r->nama_pet ?? '-' }}</td>
-                                        <td>{{ $r->nama_dokter ?? '-' }}</td>
-                                        <td>{{ optional(\Carbon\Carbon::parse($r->waktu_daftar ?? $r->created_at ?? null))->format('Y-m-d H:i') ?? '-' }}</td>
+                                        <td>{{ $r->temuDokter->pet->nama ?? '-' }}</td>
+                                        <td>{{ $r->roleUser->user->nama ?? '-' }}</td>
+                                        <td>{{ optional(\Carbon\Carbon::parse($r->temuDokter->waktu_daftar ?? $r->created_at))->format('Y-m-d H:i') ?? '-' }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -117,8 +115,27 @@
                 <div class="card">
                     <div class="card-header">Quick Links</div>
                     <div class="card-body">
-                        <a href="{{ route('admin.datapet.index') }}" class="btn btn-sm btn-primary mb-2">Manage Pets</a>
-                        <a href="{{ route('admin.datauser.index') }}" class="btn btn-sm btn-secondary mb-2">Manage Users</a>
+                        <div class="quick-grid">
+                            <a href="{{ route('admin.datapet.index') }}" class="btn btn-quick btn-primary">Manage Pets</a>
+                            <a href="{{ route('admin.datauser.index') }}" class="btn btn-quick btn-secondary">Manage Users</a>
+
+                            <a href="{{ route('admin.datadokter.index') }}" class="btn btn-quick btn-success">Manage Dokter</a>
+                            <a href="{{ route('admin.dataperawat.index') }}" class="btn btn-quick btn-info">Manage Perawat</a>
+
+                            <a href="{{ route('admin.datapemilik.index') }}" class="btn btn-quick btn-warning">Manage Pemilik</a>
+                            <a href="{{ route('admin.datarekammedis.index') }}" class="btn btn-quick btn-danger">Rekam Medis</a>
+
+                            <a href="{{ route('admin.datatindakan.index') }}" class="btn btn-quick btn-dark">Data Tindakan</a>
+                            <a href="{{ route('admin.temudokter.index') }}" class="btn btn-quick btn-light text-dark">Temu Dokter</a>
+
+                            <a href="{{ route('admin.datakategori.index') }}" class="btn btn-quick btn-outline-primary">Kategori</a>
+                            <a href="{{ route('admin.datakategoriklinis.index') }}" class="btn btn-quick btn-outline-secondary">Kategori Klinis</a>
+
+                            <a href="{{ route('admin.jenishewan.index') }}" class="btn btn-quick btn-outline-success">Jenis Hewan</a>
+                            <a href="{{ route('admin.rashewan.index') }}" class="btn btn-quick btn-outline-info">Ras Hewan</a>
+
+                            <a href="{{ route('admin.manajemenrole.index') }}" class="btn btn-quick btn-outline-warning btn-full">Manajemen Role</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -150,14 +167,80 @@
             // Pet pie
             const petLabels = ("{{ $petLabelsCsv ?? '' }}" === '') ? [] : "{{ $petLabelsCsv }}".split('|');
             const petValues = ("{{ $petValuesCsv ?? '' }}" === '') ? [] : "{{ $petValuesCsv }}".split(',').map(Number);
-            const petOptions = {
-                series: petValues,
-                chart: { type: 'donut', height: 320 },
-                labels: petLabels,
-                colors: ['#0d6efd','#198754','#ffc107','#dc3545','#6f42c1','#fd7e14']
-            };
-            const petChart = new ApexCharts(document.querySelector('#pet-pie'), petOptions);
-            petChart.render();
+
+            // If no data, show a friendly empty state inside the card
+            const petContainer = document.querySelector('#pet-pie');
+            if (!petValues || petValues.length === 0) {
+                petContainer.innerHTML = '<div class="d-flex align-items-center justify-content-center" style="height:320px;"><div class="text-muted">No pet data available</div></div>';
+            } else {
+                const petOptions = {
+                    series: petValues,
+                    chart: { type: 'donut', height: 320 },
+                    labels: petLabels,
+                    legend: { position: 'bottom' },
+                    dataLabels: {
+                        enabled: true,
+                        formatter: function (val, opts) {
+                            // show label and value (not percent) for clarity
+                            const label = opts.w.globals.labels[opts.seriesIndex] || '';
+                            return label + '\n' + Math.round(val);
+                        }
+                    },
+                    colors: ['#0d6efd','#198754','#ffc107','#dc3545','#6f42c1','#fd7e14']
+                };
+                const petChart = new ApexCharts(petContainer, petOptions);
+                petChart.render();
+            }
         })();
     </script>
+@endpush
+
+@push('styles')
+    <style>
+        /* Quick links grid */
+        .quick-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: .5rem;
+            align-items: center;
+            justify-items: center; /* center buttons horizontally inside their cells */
+        }
+
+        /* Smaller, compact pill buttons centered in the card */
+        .btn-quick {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 36px;
+            padding: .28rem .5rem;
+            border-radius: 10px;
+            font-size: .82rem;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+            transition: transform .06s ease, box-shadow .06s ease;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 260px;
+            min-width: 110px;
+            width: auto;
+        }
+
+        .btn-quick:hover { transform: translateY(-1px); box-shadow: 0 3px 8px rgba(0,0,0,0.08); }
+
+        /* Make outline variants visually consistent (light background + colored border) */
+        .btn-quick.btn-outline-primary { background:#ffffff; color:var(--bs-primary); border:1px solid var(--bs-primary); }
+        .btn-quick.btn-outline-secondary { background:#ffffff; color:var(--bs-secondary); border:1px solid var(--bs-secondary); }
+        .btn-quick.btn-outline-success { background:#ffffff; color:var(--bs-success); border:1px solid var(--bs-success); }
+        .btn-quick.btn-outline-info { background:#ffffff; color:var(--bs-info); border:1px solid var(--bs-info); }
+        .btn-quick.btn-outline-warning { background:#ffffff; color:var(--bs-warning); border:1px solid var(--bs-warning); }
+
+        /* Last button: span two columns but remain centered and constrained */
+        .btn-full { grid-column: 1 / -1; justify-self: center; max-width: 360px; width: calc(100% - 2rem); }
+
+        @media (max-width: 576px) {
+            .quick-grid { grid-template-columns: 1fr; }
+            .btn-quick { height: 40px; font-size: .86rem; min-width: auto; width: 100%; max-width: none; }
+            .btn-full { grid-column: auto; width: 100%; }
+        }
+    </style>
 @endpush

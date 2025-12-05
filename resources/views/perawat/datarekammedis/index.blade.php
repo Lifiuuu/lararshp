@@ -16,7 +16,7 @@
             <table class="table table-striped table-sm actions align-middle">
                 <thead>
                     <tr>
-                        <th>No</th>
+                        <th>No Urut</th>
                         <th>Nama Pet</th>
                         <th>Dokter</th>
                         <th>Waktu Daftar</th>
@@ -29,18 +29,19 @@
                 <tbody>
                     @forelse($rekamMediss as $i => $rm)
                         <tr>
-                                <td>{{ $i + 1 }}</td>
+                                <td>{{ $rm->temuDokter->no_urut ?? '-' }}</td>
                                 <td>
-                                    <strong>{{ $rm->nama_pet ?? '-' }}</strong>
-                                    <div class="small text-muted">Owner: {{ $rm->nama_pemilik ?? '-' }}</div>
-                                    <div class="small text-muted">Contact: {{ $rm->pemilik_no_wa ?? '-' }}</div>
+                                    <strong>{{ $rm->temuDokter->pet->nama ?? '-' }}</strong>
+                                    <div class="small text-muted">Owner: {{ $rm->temuDokter->pet->pemilik->user->nama ?? '-' }}</div>
+                                    <div class="small text-muted">Contact: {{ $rm->temuDokter->pet->pemilik->no_wa ?? '-' }}</div>
                                 </td>
-                                <td>{{ $rm->nama_dokter ?? '-' }}</td>
-                                <td>{{ optional(\Carbon\Carbon::parse($rm->waktu_daftar ?? $rm->created_at ?? $rm->created_at ?? null))->format('Y-m-d H:i') ?? '-' }}</td>
+                                <td>{{ $rm->roleUser->user->nama ?? '-' }}</td>
+                                <td>{{ optional(\Carbon\Carbon::parse($rm->temuDokter->waktu_daftar ?? $rm->created_at ?? null))->format('Y-m-d H:i') ?? '-' }}</td>
                                 <td title="{{ $rm->anamnesa ?? '-' }}">{{ Str::limit($rm->anamnesa ?? '-', 5) }}</td>
                                 <td title="{{ $rm->temuan_klinis ?? '-' }}">{{ Str::limit($rm->temuan_klinis ?? '-', 5) }}</td>
                                 <td title="{{ $rm->diagnosa ?? '-' }}">{{ Str::limit($rm->diagnosa ?? '-', 5) }}</td>
                                 <td class="actions">
+                                    <a href="{{ route('perawat.detailrekammedis.show', $rm->idrekam_medis) }}" class="btn btn-sm btn-info btn-admin sm">Lihat Detail</a>
                                     <a href="{{ route('perawat.datarekammedis.edit', $rm->idrekam_medis) }}" class="btn btn-sm btn-warning btn-admin sm">Edit</a>
                                     <form action="{{ route('perawat.datarekammedis.destroy', $rm->idrekam_medis) }}" method="POST" style="display:inline;">
                                         @csrf

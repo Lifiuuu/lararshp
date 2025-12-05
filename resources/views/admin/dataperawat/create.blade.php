@@ -18,16 +18,54 @@
                             @csrf
 
                             <div class="form-group">
-                                <label for="id_user">User</label>
-                                <select class="form-control @error('id_user') is-invalid @enderror" id="id_user" name="id_user" required>
-                                    <option value="">Pilih User</option>
-                                    @foreach($users as $user)
-                                        <option value="{{ $user->iduser }}" {{ old('id_user') == $user->iduser ? 'selected' : '' }}>{{ $user->nama }}</option>
-                                    @endforeach
-                                </select>
-                                @error('id_user')
+                                <label for="nama">Nama</label>
+                                <input type="text"
+                                       class="form-control @error('nama') is-invalid @enderror"
+                                       id="nama"
+                                       name="nama"
+                                       value="{{ old('nama') }}"
+                                       placeholder="Masukkan nama"
+                                       required>
+                                @error('nama')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email"
+                                       class="form-control @error('email') is-invalid @enderror"
+                                       id="email"
+                                       name="email"
+                                       value="{{ old('email') }}"
+                                       placeholder="Masukkan email"
+                                       required>
+                                @error('email')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <input type="password"
+                                       class="form-control @error('password') is-invalid @enderror"
+                                       id="password"
+                                       name="password"
+                                       placeholder="Masukkan password"
+                                       required>
+                                @error('password')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="form-group">
+                                <label for="password_confirmation">Konfirmasi Password</label>
+                                <input type="password"
+                                       class="form-control"
+                                       id="password_confirmation"
+                                       name="password_confirmation"
+                                       placeholder="Konfirmasi password"
+                                       required>
                             </div>
 
                             <div class="form-group">
