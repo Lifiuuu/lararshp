@@ -1,3 +1,0 @@
-- [x] Update resources/views/admin/temudokter/create.blade.php to only select pet and doctor, matching resepsionis form
-- [x] Update resources/views/admin/temudokter/edit.blade.php to only edit status with select options P, D, C
-- [x] Update resources/views/admin/temudokter/index.blade.php to include create form at top, collapsible table, add doctor column, change status display to text
