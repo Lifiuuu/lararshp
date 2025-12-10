@@ -21,6 +21,9 @@ class Pet extends Model
         parent::boot();
 
         static::deleting(function ($model) {
+            $model->temuDokter()->delete();
+            $model->rekamMedis()->delete();
+
             $userId = session('user_id');
             if ($userId) {
                 $model->deleted_by = $userId;
@@ -78,5 +81,10 @@ class Pet extends Model
     public function rekamMedis()
     {
         return $this->hasMany(RekamMedis::class, 'idpet', 'idpet');
+    }
+
+    public function temuDokter()
+    {
+        return $this->hasMany(TemuDokter::class, 'idpet', 'idpet');
     }
 }

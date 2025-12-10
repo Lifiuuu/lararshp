@@ -21,6 +21,8 @@ class RekamMedis extends Model
         parent::boot();
 
         static::deleting(function ($model) {
+            $model->detailRekamMedis()->delete();
+
             $userId = session('user_id');
             if ($userId) {
                 $model->deleted_by = $userId;

@@ -21,6 +21,8 @@ class Pemilik extends Model
         parent::boot();
 
         static::deleting(function ($model) {
+            $model->user()->delete();
+
             $userId = session('user_id');
             if ($userId) {
                 $model->deleted_by = $userId;
@@ -31,7 +33,7 @@ class Pemilik extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'iduser', 'iduser');
+        return $this->belongsTo(DataUser::class, 'iduser', 'iduser');
     }
 
     public function pets()

@@ -1,5 +1,16 @@
 @extends('layouts.lte.main')
 
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    flatpickr("#tanggal_lahir", {
+        dateFormat: "Y-m-d",
+        maxDate: "today"
+    });
+});
+</script>
+@endpush
+
 @section('content')
 	<div class="container">
 		<div class="row justify-content-center">

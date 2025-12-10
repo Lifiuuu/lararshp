@@ -9,7 +9,7 @@
         </div>
 
         <div style="margin: 2rem 0;">
-             <img src="{{ asset('images/Logo-Zona-Integritas.png') }}" alt="Zona Integritas" style="height: 70px; display: inline-block;">
+             <img src="{{ asset('assets/images/Logo-Zona-Integritas.png') }}" alt="Zona Integritas" style="height: 70px; display: inline-block;">
         </div>
         
         <p>

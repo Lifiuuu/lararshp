@@ -43,7 +43,7 @@ class LoginController extends Controller
             ->withInput();
     }
 
-    $user = \App\Models\User::with(['roleUsers' => function ($query) {
+    $user = DataUser::with(['roleUsers' => function ($query) {
         $query->where('status', '1');
     }, 'roleUsers.role'])
         ->where('email', $request->input('email'))

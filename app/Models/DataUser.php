@@ -23,6 +23,11 @@ class DataUser extends Authenticatable
         parent::boot();
 
         static::deleting(function ($model) {
+            $model->roleUsers()->delete();
+            $model->perawat()->delete();
+            $model->dokter()->delete();
+            $model->pemilik()->delete();
+
             $userId = session('user_id');
             if ($userId) {
                 $model->deleted_by = $userId;
@@ -44,5 +49,15 @@ class DataUser extends Authenticatable
     public function roles()
     {
         return $this->belongsToMany(Role::class, 'role_user', 'iduser', 'idrole');
+    }
+
+    public function dokter()
+    {
+        return $this->hasOne(Dokter::class, 'id_user', 'iduser');
+    }
+
+    public function perawat()
+    {
+        return $this->hasOne(Perawat::class, 'id_user', 'iduser');
     }
 }

@@ -1,5 +1,7 @@
 @extends('layouts.lte.main')
 
+@section('page-title', 'Profile')
+
 @section('content')
 <div class="container">
     <div class="row justify-content-center">

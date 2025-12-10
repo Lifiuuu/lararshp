@@ -22,7 +22,10 @@ class DashboardController extends Controller
             return redirect()->route('login')->with('error', 'Data pemilik tidak ditemukan.');
         }
 
-        $pets = Pet::with('pemilik', 'rasHewan')->where('idpemilik', $pemilik->idpemilik)->get();
+        $pets = Pet::with('pemilik', 'rasHewan')
+            ->where('idpemilik', $pemilik->idpemilik)
+            ->whereHas('rasHewan.jenisHewan', fn($q) => $q->whereNull('deleted_at'))
+            ->get();
 
         // $pets = DB::table('pet as p')
         //     ->leftJoin('pemilik as pm', 'p.idpemilik', '=', 'pm.idpemilik')
@@ -33,6 +36,7 @@ class DashboardController extends Controller
 
         $rekamMediss = RekamMedis::with('temuDokter.pet', 'temuDokter.roleUser.user')
             ->whereHas('temuDokter.pet', fn($q) => $q->where('idpemilik', $pemilik->idpemilik))
+            ->whereHas('temuDokter.roleUser.user', fn($q) => $q->whereNull('deleted_at'))
             ->get();
 
         // $rekamMediss = DB::table('rekam_medis as r')
@@ -44,7 +48,13 @@ class DashboardController extends Controller
         //     ->where('p.idpemilik', $pemilik->idpemilik)
         //     ->get();
 
-        $data = ['pets' => $pets, 'rekamMediss' => $rekamMediss];
+        $temudokters = \App\Models\TemuDokter::with('pet.pemilik.user', 'roleUser.user')
+            ->whereHas('pet', fn($q) => $q->where('idpemilik', $pemilik->idpemilik))
+            ->whereHas('pet.pemilik.user', fn($q) => $q->whereNull('deleted_at'))
+            ->whereHas('roleUser.user', fn($q) => $q->whereNull('deleted_at'))
+            ->get();
+
+        $data = ['pets' => $pets, 'rekamMediss' => $rekamMediss, 'temudokters' => $temudokters];
 
         return view('pemilik.dashboard', compact('data', 'role'));
     }

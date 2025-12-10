@@ -4,19 +4,19 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use App\Models\TemuDokter;
 use App\Models\Pet;
 use App\Models\RoleUser;
-use App\Models\User;
 use App\Models\Role;
 
 class TemudokterController extends Controller
 {
     public function index()
     {
-        $temudokters = TemuDokter::with('pet.pemilik.user', 'roleUser.user')->orderBy('waktu_daftar', 'desc')->get();
+        $temudokters = TemuDokter::with('pet.pemilik.user', 'roleUser.user')
+            ->whereHas('pet.pemilik.user', fn($q) => $q->whereNull('deleted_at'))
+            ->orderBy('waktu_daftar', 'desc')->get();
 
         // $temudokters = DB::table('temu_dokter as t')
         //     ->leftJoin('pet as p', 't.idpet', '=', 'p.idpet')
@@ -27,8 +27,9 @@ class TemudokterController extends Controller
         //     ->get();
 
         // Pets with owner name for the inline create form
-        $pets = Pet::with('pemilik.user')->get();
-
+        $pets = Pet::with('pemilik.user')
+        ->whereHas('pemilik.user', fn($q) => $q->whereNull('deleted_at'))
+        ->get();
         // $pets = DB::table('pet as p')
         //     ->leftJoin('pemilik as pm', 'p.idpemilik', '=', 'pm.idpemilik')
         //     ->leftJoin('user as u', 'pm.iduser', '=', 'u.iduser')
@@ -36,7 +37,9 @@ class TemudokterController extends Controller
         //     ->get();
 
         // Doctors (role_user entries with role = Dokter) with user name
-        $doctors = RoleUser::with('user')->whereHas('role', fn($q) => $q->where('nama_role', 'Dokter'))->get();
+        $doctors = RoleUser::with('user')
+        ->whereHas('role', fn($q) => $q->where('nama_role', 'Dokter'))->whereNull('deleted_at')
+        ->get();
 
         // $doctors = DB::table('role_user')
         //     ->join('role', 'role_user.idrole', '=', 'role.idrole')

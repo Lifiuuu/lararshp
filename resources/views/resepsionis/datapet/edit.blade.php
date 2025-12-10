@@ -1,5 +1,16 @@
 @extends('layouts.lte.main')
 
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    flatpickr("#tanggal_lahir", {
+        dateFormat: "Y-m-d",
+        maxDate: "today"
+    });
+});
+</script>
+@endpush
+
 @section('content')
     <div class="container">
         <div class="card">
@@ -40,7 +51,7 @@
                         <label class="form-label" for="idpemilik">Pemilik</label>
                         <select id="idpemilik" name="idpemilik" class="form-select">
                             @foreach($pemiliks as $pm)
-                                <option value="{{ $pm->idpemilik }}" @if($pet->idpemilik == $pm->idpemilik) selected @endif>{{ $pm->user->nama ?? 'N/A' }}</option>
+                                <option value="{{ $pm->idpemilik }}" @if($pet->idpemilik == $pm->idpemilik) selected @endif>{{ $pm->user->nama ?? ($pm->no_wa ?? 'Pemilik #' . $pm->idpemilik) }}</option>
                             @endforeach
                         </select>
                         @error('idpemilik')<div class="text-danger small">{{ $message }}</div>@enderror

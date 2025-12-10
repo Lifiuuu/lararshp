@@ -1,5 +1,16 @@
 @extends('layouts.lte.main')
 
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    flatpickr("#tanggal_lahir", {
+        dateFormat: "Y-m-d",
+        maxDate: "today"
+    });
+});
+</script>
+@endpush
+
 @section('content')
     <div class="container">
         <div class="card">
@@ -40,7 +51,7 @@
                         <input type="text" id="pemilik_search" name="pemilik_search" class="form-control" list="pemilik_list" placeholder="Ketik nama pemilik..." autocomplete="off">
                         <datalist id="pemilik_list">
                             @foreach($pemiliks as $pm)
-                                <option value="{{ $pm->user->nama ?? 'N/A' }}" data-id="{{ $pm->idpemilik }}">
+                                <option value="{{ $pm->user->nama ?? ($pm->no_wa ?? 'Pemilik #' . $pm->idpemilik) }}" data-id="{{ $pm->idpemilik }}">
                             @endforeach
                         </datalist>
                         <input type="hidden" id="idpemilik" name="idpemilik">

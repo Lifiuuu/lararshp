@@ -26,6 +26,7 @@ class DatarekammedisController extends Controller
             ->orderBy('temu_dokter.waktu_daftar', 'asc')
             ->select('rekam_medis.*')
             ->with('temuDokter.pet.pemilik.user', 'roleUser.user')
+            ->whereHas('temuDokter.pet.pemilik.user', fn($q) => $q->whereNull('deleted_at'))
             ->get();
         // $rekamMediss = DB::table('rekam_medis as r')
         //     ->leftJoin('temu_dokter as t', 'r.idreservasi_dokter', '=', 't.idreservasi_dokter')

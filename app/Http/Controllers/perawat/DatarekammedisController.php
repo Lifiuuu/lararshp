@@ -15,11 +15,12 @@ class DatarekammedisController extends Controller
     {
         // Use Eloquent: join to allow ordering by temu_dokter.waktu_daftar, eager load relations for the view
         $rekamMediss = RekamMedis::join('temu_dokter', 'rekam_medis.idreservasi_dokter', '=', 'temu_dokter.idreservasi_dokter')
-            ->where('temu_dokter.status', '=', 'P')
+            ->where('temu_dokter.status', '!=', 'B')
             ->whereDate('temu_dokter.waktu_daftar', Carbon::today()->toDateString())
             ->orderBy('temu_dokter.waktu_daftar', 'asc')
             ->select('rekam_medis.*')
             ->with('temuDokter.pet.pemilik.user', 'roleUser.user')
+            ->whereHas('temuDokter.pet.pemilik.user', fn($q) => $q->whereNull('deleted_at'))
             ->get();
 
         return view('perawat.datarekammedis.index', compact('rekamMediss'));
@@ -28,10 +29,17 @@ class DatarekammedisController extends Controller
     public function create()
     {
         // Get temu_dokter with status 'P' and not already in rekam_medis
+        // Pastikan juga relasi pet -> pemilik -> user ada dan tidak soft-deleted.
         $temuDokters = TemuDokter::with('pet.pemilik.user')
+            ->whereHas('pet', function ($query) {
+                $query->whereHas('pemilik', function ($subQuery) {
+                    $subQuery->whereHas('user');
+                });
+            })
             ->where('status', 'P')
             ->whereDate('waktu_daftar', Carbon::today()->toDateString())
             ->whereNotIn('idreservasi_dokter', RekamMedis::pluck('idreservasi_dokter'))
+            ->whereNull('deleted_at') // Secara eksplisit menyaring temu_dokter yang sudah di-soft delete
             ->get()
             ->map(function($temu) {
                 $temu->nama_pet = $temu->pet->nama ?? '';

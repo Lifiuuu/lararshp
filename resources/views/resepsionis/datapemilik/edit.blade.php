@@ -20,18 +20,6 @@
                         <textarea id="alamat" name="alamat" class="form-control">{{ old('alamat', $pemilik->alamat ?? '') }}</textarea>
                         @error('alamat')<div class="text-danger small">{{ $message }}</div>@enderror
                     </div>
-
-                    <div class="mb-3">
-                        <label class="form-label" for="iduser">User (opsional)</label>
-                        <select id="iduser" name="iduser" class="form-select">
-                            <option value="">-- pilih --</option>
-                            @foreach($users as $u)
-                                <option value="{{ $u->iduser }}" @if(($pemilik->iduser ?? null) == $u->iduser) selected @endif>{{ $u->nama }} ({{ $u->email }})</option>
-                            @endforeach
-                        </select>
-                        @error('iduser')<div class="text-danger small">{{ $message }}</div>@enderror
-                    </div>
-
                     <div class="d-flex justify-content-between">
                         <a href="{{ route('resepsionis.datapemilik.index') }}" class="btn btn-secondary">Batal</a>
                         <button type="submit" class="btn btn-primary">Perbarui</button>

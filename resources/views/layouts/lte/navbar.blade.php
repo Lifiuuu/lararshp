@@ -11,41 +11,77 @@
       </li>
       @if(session('user_role') == 1)
         <!-- Admin Menu -->
-        <li class="nav-item"><a href="{{ route('admin.dashboard') }}" class="nav-link">Dashboard</a></li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ route('admin.dashboard') }}">Dashboard</a>
+        </li>
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="adminDataDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Data Master
+          <a class="nav-link dropdown-toggle" href="#" id="masterDataDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Master Data
           </a>
-          <ul class="dropdown-menu" aria-labelledby="adminDataDropdown">
+          <ul class="dropdown-menu" aria-labelledby="masterDataDropdown">
             <li><a class="dropdown-item" href="{{ route('admin.datauser.index') }}">Data User</a></li>
+            <li><a class="dropdown-item" href="{{ route('admin.manajemenrole.index') }}">Role</a></li>
+            <li><a class="dropdown-item" href="{{ route('admin.jenishewan.index') }}">Jenis Hewan</a></li>
+            <li><a class="dropdown-item" href="{{ route('admin.rashewan.index') }}">Ras Hewan</a></li>
+            <li><a class="dropdown-item" href="{{ route('admin.datapemilik.index') }}">Data Pemilik</a></li>
             <li><a class="dropdown-item" href="{{ route('admin.datadokter.index') }}">Data Dokter</a></li>
             <li><a class="dropdown-item" href="{{ route('admin.dataperawat.index') }}">Data Perawat</a></li>
-            <li><a class="dropdown-item" href="{{ route('admin.datapemilik.index') }}">Data Pemilik</a></li>
             <li><a class="dropdown-item" href="{{ route('admin.datapet.index') }}">Data Pet</a></li>
-            <li><a class="dropdown-item" href="{{ route('admin.datarekammedis.index') }}">Data Rekam Medis</a></li>
-            <li><a class="dropdown-item" href="{{ route('admin.datatindakan.index') }}">Data Tindakan</a></li>
+            <li><a class="dropdown-item" href="{{ route('admin.datakategori.index') }}">Kategori</a></li>
+            <li><a class="dropdown-item" href="{{ route('admin.datakategoriklinis.index') }}">Kategori Klinis</a></li>
+          </ul>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="transaksionalDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Transaksional
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="transaksionalDropdown">
+            <li><a class="dropdown-item" href="{{ route('admin.datarekammedis.index') }}">Rekam Medis</a></li>
             <li><a class="dropdown-item" href="{{ route('admin.temudokter.index') }}">Temu Dokter</a></li>
+            <li><a class="dropdown-item" href="{{ route('admin.datatindakan.index') }}">Data Tindakan</a></li>
           </ul>
         </li>
       @elseif(session('user_role') == 2)
         <!-- Dokter Menu -->
-        <li class="nav-item"><a href="{{ route('dokter.dashboard') }}" class="nav-link">Dashboard</a></li>
-        <li class="nav-item"><a href="{{ route('dokter.datarekammedis.index') }}" class="nav-link">Data Rekam Medis</a></li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ route('dokter.dashboard') }}">Dashboard</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ route('dokter.datarekammedis.index') }}">Rekam Medis</a>
+        </li>
       @elseif(session('user_role') == 3)
         <!-- Perawat Menu -->
-        <li class="nav-item"><a href="{{ route('perawat.dashboard') }}" class="nav-link">Dashboard</a></li>
-        <li class="nav-item"><a href="{{ route('perawat.datarekammedis.index') }}" class="nav-link">Data Rekam Medis</a></li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ route('perawat.dashboard') }}">Dashboard</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ route('perawat.datarekammedis.index') }}">Rekam Medis</a>
+        </li>
       @elseif(session('user_role') == 4)
         <!-- Resepsionis Menu -->
-        <li class="nav-item"><a href="{{ route('resepsionis.dashboard') }}" class="nav-link">Dashboard</a></li>
-        <li class="nav-item"><a href="{{ route('resepsionis.datapemilik.index') }}" class="nav-link">Data Pemilik</a></li>
-        <li class="nav-item"><a href="{{ route('resepsionis.datapet.index') }}" class="nav-link">Data Pet</a></li>
-        <li class="nav-item"><a href="{{ route('resepsionis.temudokter.index') }}" class="nav-link">Temu Dokter</a></li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ route('resepsionis.dashboard') }}">Dashboard</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ route('resepsionis.datapemilik.index') }}">Data Pemilik</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ route('resepsionis.datapet.index') }}">Data Pet</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ route('resepsionis.temudokter.index') }}">Temu Dokter</a>
+        </li>
       @elseif(session('user_role') == 5)
         <!-- Pemilik Menu -->
-        <li class="nav-item"><a href="{{ route('pemilik.dashboard') }}" class="nav-link">Dashboard</a></li>
-        <li class="nav-item"><a href="{{ route('pemilik.pet.index') }}" class="nav-link">Data Pet</a></li>
-        <li class="nav-item"><a href="{{ route('pemilik.rekammedis.index') }}" class="nav-link">Rekam Medis</a></li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ route('pemilik.dashboard') }}">Dashboard</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ route('pemilik.pet.index') }}">My Pets</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ route('pemilik.rekammedis.index') }}">Rekam Medis</a>
+        </li>
       @endif
     </ul>
     <!--end::Start Navbar Links-->

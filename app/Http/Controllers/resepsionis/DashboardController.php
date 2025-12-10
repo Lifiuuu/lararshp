@@ -15,11 +15,18 @@ class DashboardController extends Controller
     {
         $role = session('user_role');
 
-        $pemiliks = Pemilik::with('user')->get();
+        $pemiliks = Pemilik::with('user')->whereHas('user', fn($q) => $q->whereNull('deleted_at'))->get();
 
-        $pets = Pet::with('pemilik.user', 'rasHewan')->get();
+        $pets = Pet::with('pemilik.user', 'rasHewan')
+            ->whereHas('pemilik.user', fn($q) => $q->whereNull('deleted_at'))
+            ->whereHas('rasHewan.jenisHewan', fn($q) => $q->whereNull('deleted_at'))
+            ->get();
 
-        $temudokters = TemuDokter::with('pet.pemilik.user', 'roleUser.user')->whereDate('waktu_daftar', now()->toDateString())->get();
+        $temudokters = TemuDokter::with('pet.pemilik.user', 'roleUser.user')
+            ->whereDate('waktu_daftar', now()->toDateString())
+            ->whereHas('pet.pemilik.user', fn($q) => $q->whereNull('deleted_at'))
+            ->whereHas('roleUser.user', fn($q) => $q->whereNull('deleted_at'))
+            ->get();
 
         // // Use query builder to ensure owner names come from `user` table
         // $pemiliks = DB::table('pemilik as pm')

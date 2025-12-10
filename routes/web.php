@@ -31,12 +31,11 @@ Route::prefix('admin')->name('admin.')->middleware(['administrator'])->group(fun
     Route::resource('datapet', App\Http\Controllers\Admin\DatapetController::class);
     Route::resource('datarekammedis', App\Http\Controllers\Admin\DatarekammedisController::class);
     Route::resource('datatindakan', App\Http\Controllers\Admin\DatatindakanController::class);
-    Route::get('detailrekammedis/create/{idrekam}', [App\Http\Controllers\Admin\DetailrekammedisController::class, 'create'])->name('detailrekammedis.create');
     Route::resource('detailrekammedis', App\Http\Controllers\Admin\DetailrekammedisController::class)->except(['create']);
+    Route::get('detailrekammedis/create/{idrekam}', [App\Http\Controllers\Admin\DetailrekammedisController::class, 'create'])->name('detailrekammedis.create');
     Route::resource('temudokter', App\Http\Controllers\Admin\TemudokterController::class);
     Route::resource('jenishewan', App\Http\Controllers\Admin\JenishewanController::class);
     Route::resource('manajemenrole', App\Http\Controllers\Admin\ManajemenroleController::class);
-    Route::resource('pemilik', App\Http\Controllers\Admin\PemilikController::class);
     Route::resource('rashewan', App\Http\Controllers\Admin\RashewanController::class);
     Route::resource('datadokter', App\Http\Controllers\Admin\DokterController::class);
     Route::resource('dataperawat', App\Http\Controllers\Admin\PerawatController::class);
@@ -60,10 +59,6 @@ Route::prefix('dokter')->name('dokter.')->middleware(['dokter'])->group(function
 
 Route::prefix('perawat')->name('perawat.')->middleware(['perawat'])->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\perawat\DashboardController::class, 'index'])->name('dashboard');
-
-    // Pasien (datapet with owner) for perawat
-    Route::resource('datapasien', App\Http\Controllers\perawat\DatapasienController::class);
-
     // Rekam Medis and tindakan for perawat
     Route::resource('datarekammedis', App\Http\Controllers\perawat\DatarekammedisController::class);
     Route::resource('datatindakan', App\Http\Controllers\perawat\DatatindakanController::class);
@@ -81,7 +76,6 @@ Route::prefix('resepsionis')->name('resepsionis.')->middleware(['resepsionis'])-
     // Pemilik, pet and temu dokter resources for resepsionis
     Route::resource('datapemilik', App\Http\Controllers\resepsionis\DatapemilikController::class);
     Route::resource('datapet', App\Http\Controllers\resepsionis\DatapetController::class);
-    Route::resource('datarekammedis', App\Http\Controllers\resepsionis\DatarekammedisController::class);
     Route::resource('temudokter', App\Http\Controllers\resepsionis\TemudokterController::class);
 });
 

@@ -17,32 +17,8 @@ class DatauserController extends Controller
 {
     public function index()
     {
-        $users = DataUser::with('roles', 'pemilik')->whereNull('deleted_at')->get();
-        // Use query builder to fetch user rows joined with role rows (may create multiple rows per user
-        // when users have multiple roles). We normalize the result into one object per user and
-        // attach a `roles` collection so views that expect `$user->roles` continue to work.
-        // Only join active role_user rows (status = 1) so inactive role assignments
-        // don't appear in the user's role list after updates.
-        // $rawRows = DB::table('user')
-        //     ->leftJoin('role_user', function ($join) {
-        //         $join->on('user.iduser', '=', 'role_user.iduser')
-        //              ->where('role_user.status', '=', 1);
-        //     })
-        //     ->leftJoin('role', 'role_user.idrole', '=', 'role.idrole')
-        //     ->leftJoin('pemilik', 'user.iduser', '=', 'pemilik.iduser')
-        //     ->select('user.*', 'role.nama_role', 'user.nama as nama_pemilik', 'pemilik.no_wa as pemilik_no_wa')
-        //     ->get();
-
-        // // Group rows by user id and fold rows into a single user object with a `roles` collection
-        // $users = $rawRows->groupBy('iduser')->map(function ($rows) {
-        //     $first = $rows->first();
-        //     $roles = $rows->pluck('nama_role')->filter()->unique()->map(function ($name) {
-        //         return (object)['nama_role' => $name];
-        //     })->values();
-        //     // attach roles collection to the user object
-        //     $first->roles = $roles;
-        //     return $first;
-        // })->values();
+        $users = DataUser::with('roles', 'pemilik')->get();
+       
         return view('admin.datauser.index', compact('users'));
     }
 

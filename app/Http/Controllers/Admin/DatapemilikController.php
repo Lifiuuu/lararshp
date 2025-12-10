@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Pemilik;
-use App\Models\User;
+use App\Models\DataUser;
 use App\Models\Role;
 use App\Models\RoleUser;
 use Illuminate\Support\Facades\DB;
@@ -38,16 +38,16 @@ class DatapemilikController extends Controller
         $validatedData['nama'] = normalize_name($validatedData['nama']);
 
         // Create user first
-        $user = \App\Models\User::create([
+        $user = DataUser::create([
             'nama' => $validatedData['nama'],
             'email' => $validatedData['email'],
             'password' => bcrypt($validatedData['password']),
         ]);
 
         // Assign role 'pemilik'
-        $rolePemilik = \App\Models\Role::where('nama_role', 'pemilik')->first();
+        $rolePemilik = Role::where('nama_role', 'pemilik')->first();
         if ($rolePemilik) {
-            \App\Models\RoleUser::create([
+            RoleUser::create([
                 'iduser' => $user->iduser,
                 'idrole' => $rolePemilik->idrole,
                 'status' => 1,

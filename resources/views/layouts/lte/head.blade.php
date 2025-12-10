@@ -17,6 +17,10 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" crossorigin="anonymous" />
 <!--end::Third Party Plugin(Bootstrap Icons)-->
 
+<!--begin::Third Party Plugin(Flatpickr Date Picker)-->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" crossorigin="anonymous" />
+<!--end::Third Party Plugin(Flatpickr Date Picker)-->
+
 <!--begin::Required Plugin(AdminLTE) - use files in public/assets/css -->
 <link rel="stylesheet" href="{{ asset('assets/css/adminlte.min.css') }}" />
 <!-- if you prefer the non-minified file, use: {{ "asset('assets/css/adminlte.css')" }} -->

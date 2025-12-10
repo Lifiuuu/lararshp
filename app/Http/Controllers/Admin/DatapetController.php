@@ -5,13 +5,17 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Pet;
+use App\Models\Pemilik;
+use App\Models\RasHewan;
 use Illuminate\Support\Facades\DB;
 
 class DatapetController extends Controller
 {
     public function index()
     {
-        $pets = Pet::with('pemilik.user', 'rasHewan')->whereHas('pemilik.user', fn($q) => $q->whereNull('deleted_at'))->get();
+        $pets = Pet::with('pemilik.user', 'rasHewan')
+        ->whereHas('pemilik.user', fn($q) => $q->whereNull('deleted_at'))
+        ->get();
         // $pets = DB::table('pet')
         //     ->join('pemilik', 'pet.idpemilik', '=', 'pemilik.idpemilik')
         //     ->leftJoin('user', 'pemilik.iduser', '=', 'user.iduser')
@@ -25,13 +29,13 @@ class DatapetController extends Controller
     public function create()
     {
         // eager load user to be able to show owner's name in dropdown
-        $pemiliks = \App\Models\Pemilik::with('user')->whereHas('user', fn($q) => $q->whereNull('deleted_at'))->get();
+        $pemiliks = Pemilik::with('user')->whereHas('user', fn($q) => $q->whereNull('deleted_at'))->get();
         // $pemiliks = DB::table('pemilik')
         //     ->leftJoin('user', 'pemilik.iduser', '=', 'user.iduser')
         //     ->select('pemilik.*', 'user.nama as nama_user')
         //     ->get();
         
-        $rasHewans = \App\Models\RasHewan::with('jenisHewan')->get();
+        $rasHewans = RasHewan::with('jenisHewan')->get();
         // $rasHewans = DB::table('ras_hewan')
         //     ->join('jenis_hewan', 'ras_hewan.idjenis_hewan', '=', 'jenis_hewan.idjenis_hewan')
         //     ->select('ras_hewan.*', 'jenis_hewan.nama_jenis_hewan')

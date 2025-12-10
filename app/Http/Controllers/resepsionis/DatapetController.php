@@ -8,12 +8,15 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Pet;
 use App\Models\Pemilik;
 use App\Models\RasHewan;
+use App\Models\RoleUser;
 
 class DatapetController extends Controller
 {
     public function index()
     {
-        $pets = Pet::with('pemilik.user', 'rasHewan')->get();
+       $pets = Pet::with('pemilik.user', 'rasHewan')
+        ->whereHas('pemilik.user', fn($q) => $q->whereNull('deleted_at'))
+        ->get();
 
         // $pets = DB::table('pet as p')
         //     ->leftJoin('pemilik as pm', 'p.idpemilik', '=', 'pm.idpemilik')
@@ -27,7 +30,7 @@ class DatapetController extends Controller
 
     public function create()
     {
-        $pemiliks = Pemilik::with('user')->get();
+        $pemiliks = Pemilik::with('user')->whereHas('user', fn($q) => $q->whereNull('deleted_at'))->get();
 
         $rasHewans = RasHewan::with('jenisHewan')->get();
 
@@ -61,7 +64,10 @@ class DatapetController extends Controller
         // $pet = DB::table('pet')->where('idpet', $id)->first();
         // if (!$pet) abort(404);
 
-        $pemiliks = Pemilik::with('user')->get();
+        $pemiliks = Pemilik::with('user')
+            ->whereNull('deleted_at')
+            ->whereHas('user', fn($q) => $q->whereNull('deleted_at'))
+            ->get();
 
         $rasHewans = RasHewan::with('jenisHewan')->get();
 

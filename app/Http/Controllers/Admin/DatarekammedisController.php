@@ -15,10 +15,10 @@ class DatarekammedisController extends Controller
     {
         // Use Eloquent: join to allow ordering by temu_dokter.waktu_daftar, eager load relations for the view
         $rekamMediss = RekamMedis::join('temu_dokter', 'rekam_medis.idreservasi_dokter', '=', 'temu_dokter.idreservasi_dokter')
-            ->where('temu_dokter.status', '!=', 'D')
-            ->orderBy('temu_dokter.waktu_daftar', 'desc')
+        ->orderBy('temu_dokter.waktu_daftar', 'desc')
             ->select('rekam_medis.*')
             ->with('temuDokter.pet.pemilik.user', 'roleUser.user')
+            ->whereHas('temuDokter.pet.pemilik.user', fn($q) => $q->whereNull('deleted_at'))    
             ->get();
 
         return view('admin.datarekammedis.index', compact('rekamMediss'));

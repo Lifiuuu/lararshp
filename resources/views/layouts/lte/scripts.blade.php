@@ -15,6 +15,10 @@
 <script src="{{ asset('assets/js/adminlte.min.js') }}"></script>
 <!--end::Required Plugin(AdminLTE)-->
 
+<!--begin::Third Party Plugin(Flatpickr Date Picker)-->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr" crossorigin="anonymous"></script>
+<!--end::Third Party Plugin(Flatpickr Date Picker)-->
+
 <!--begin::OverlayScrollbars Configure-->
 <script>
   const SELECTOR_SIDEBAR_WRAPPER = '.sidebar-wrapper';

@@ -20,6 +20,8 @@ class Perawat extends Model
         parent::boot();
 
         static::deleting(function ($model) {
+            $model->user()->delete();
+
             $userId = session('user_id');
             if ($userId) {
                 $model->deleted_by = $userId;
@@ -30,6 +32,6 @@ class Perawat extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'id_user', 'iduser');
+        return $this->belongsTo(DataUser::class, 'id_user', 'iduser');
     }
 }

@@ -19,51 +19,40 @@ class DashboardController extends Controller
         $role = session('user_role');
 
         // Only include Rekam Medis with temuDokter scheduled today and not deleted
-        $rekamMediss = RekamMedis::with('temuDokter.pet.pemilik.user', 'roleUser.user')
-            ->whereHas('temuDokter', function($q) {
-                $q->where('status', '!=', 'D')
-                  ->whereDate('waktu_daftar', Carbon::today()->toDateString());
-            })
+       $rekamMediss = RekamMedis::join('temu_dokter', 'rekam_medis.idreservasi_dokter', '=', 'temu_dokter.idreservasi_dokter')
+            ->where('temu_dokter.status', '!=', 'B')
+            ->whereDate('temu_dokter.waktu_daftar', Carbon::today()->toDateString())
+            ->orderBy('temu_dokter.waktu_daftar', 'asc')
+            ->select('rekam_medis.*')
+            ->with('temuDokter.pet.pemilik.user', 'roleUser.user')
+            ->whereHas('temuDokter.pet.pemilik.user', fn($q) => $q->whereNull('deleted_at'))
             ->get()
             ->sortByDesc(function($r) { return optional($r->temuDokter)->waktu_daftar ?? $r->created_at; })
             ->values();
 
-        // $rekamMediss = DB::table('rekam_medis as r')
-        //     ->leftJoin('temu_dokter as t', 'r.idreservasi_dokter', '=', 't.idreservasi_dokter')
-        //     ->leftJoin('pet as p', 't.idpet', '=', 'p.idpet')
-        //     ->leftJoin('pemilik as pm', 'p.idpemilik', '=', 'pm.idpemilik')
-        //     ->leftJoin('user as u_owner', 'pm.iduser', '=', 'u_owner.iduser')
-        //     // doctor who examined
-        //     ->leftJoin('role_user as ru_doc', 'r.dokter_pemeriksa', '=', 'ru_doc.idrole_user')
-        //     ->leftJoin('user as u_doc', 'ru_doc.iduser', '=', 'u_doc.iduser')
-        //     ->select('r.*', 't.no_urut', 't.waktu_daftar', 'p.nama as nama_pet', 'u_doc.nama as nama_dokter', 'u_owner.nama as nama_pemilik')
-        //     ->where('t.status', '!=', 'D')
-        //     ->get();
 
-        $tindakans = KodeTindakanTerapi::with('kategori', 'kategoriKlinis')->get();
+        $tindakans = KodeTindakanTerapi::with('kategori', 'kategoriKlinis')
+            ->whereHas('kategori', fn($q) => $q->whereNull('deleted_at'))
+            ->whereHas('kategoriKlinis', fn($q) => $q->whereNull('deleted_at'))
+            ->get();
 
-        // $tindakans = DB::table('kode_tindakan_terapi as k')
-        //     ->leftJoin('kategori as kat', 'k.idkategori', '=', 'kat.idkategori')
-        //     ->leftJoin('kategori_klinis as kk', 'k.idkategori_klinis', '=', 'kk.idkategori_klinis')
-        //     ->select('k.*', 'kat.nama_kategori', 'kk.nama_kategori_klinis')
-        //     ->get();
+  
 
         $data = ['rekamMediss' => $rekamMediss, 'tindakans' => $tindakans];
 
         // Summary stats
         $stats = [
-            'patients' => \App\Models\Pet::count(),
-            'rekam_medis' => RekamMedis::whereHas('temuDokter', fn($q) => $q->where('status', '=', 'P')->whereDate('waktu_daftar', Carbon::today()->toDateString()))->count(),
+            'patients' => Pet::count(),
+            'rekam_medis' => 
+            $rekamMediss = RekamMedis::join('temu_dokter', 'rekam_medis.idreservasi_dokter', '=', 'temu_dokter.idreservasi_dokter')
+            ->where('temu_dokter.status', '!=', 'B')
+            ->whereDate('temu_dokter.waktu_daftar', Carbon::today()->toDateString())
+            ->orderBy('temu_dokter.waktu_daftar', 'asc')
+            ->select('rekam_medis.*')
+            ->with('temuDokter.pet.pemilik.user', 'roleUser.user')
+            ->whereHas('temuDokter.pet.pemilik.user', fn($q) => $q->whereNull('deleted_at'))
+            ->count(),
         ];
-
-        // // Summary stats
-        // $stats = [
-        //     'patients' => DB::table('pet')->count(),
-        //     'rekam_medis' => DB::table('rekam_medis as r')
-        //         ->join('temu_dokter as t', 'r.idreservasi_dokter', '=', 't.idreservasi_dokter')
-        //         ->where('t.status', '!=', 'D')
-        //         ->count(),
-        // ];
 
         // Monthly visits for last 6 months (based on temu_dokter.waktu_daftar)
         $start = Carbon::now()->startOfMonth()->subMonths(5)->toDateString();

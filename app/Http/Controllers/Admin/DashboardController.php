@@ -26,29 +26,10 @@ class DashboardController extends Controller
         $role = session('user_role');
         $data = [
             'kategoris' => Kategori::whereNull('deleted_at')->get(),
-
-            // 'kategoris' => DB::table('kategori')->get(),
-            
             'kategoriKliniss' => KategoriKlinis::whereNull('deleted_at')->get(),
-
-            // 'kategoriKliniss' => DB::table('kategori_klinis')->get(),
-            
             'jenisHewans' => JenisHewan::whereNull('deleted_at')->get(),
-
-            // 'jenisHewans' => DB::table('jenis_hewan')->get(),
-            
             'rasHewans' => RasHewan::with('jenisHewan')->whereHas('jenisHewan', fn($q) => $q->whereNull('deleted_at'))->get(),
-
-            // 'rasHewans' => DB::table('ras_hewan')
-            //     ->join('jenis_hewan', 'ras_hewan.idjenis_hewan', '=', 'jenis_hewan.idjenis_hewan')
-            //     ->select('ras_hewan.*', 'jenis_hewan.nama_jenis_hewan')
-            //     ->get(),
-            
             'roles' => Role::whereNull('deleted_at')->get(),
-
-            // 'roles' => DB::table('role')->get(),
-            
-            // 'users' => \App\Models\DataUser::with('roles', 'pemilik')->get(),
             'users' => DB::table('user')
                 ->leftJoin('role_user', 'user.iduser', '=', 'role_user.iduser')
                 ->leftJoin('role', 'role_user.idrole', '=', 'role.idrole')
@@ -56,27 +37,11 @@ class DashboardController extends Controller
                 ->whereNull('user.deleted_at')
                 ->select('user.*', 'role.nama_role', 'pemilik.idpemilik', 'pemilik.no_wa as pemilik_no_wa', 'pemilik.alamat')
                 ->get(),
-            
             'pemiliks' => Pemilik::with('user')->whereHas('user', fn($q) => $q->whereNull('deleted_at'))->get(),
-
-            // 'pemiliks' => DB::table('pemilik')
-            //     ->leftJoin('user', 'pemilik.iduser', '=', 'user.iduser')
-            //     ->select('pemilik.*', 'user.nama as nama_user', 'user.email')
-            //     ->get(),
-            
             'pets' => Pet::with('pemilik.user', 'rasHewan')
                 ->whereHas('pemilik.user', fn($q) => $q->whereNull('deleted_at'))
                 ->whereHas('rasHewan.jenisHewan', fn($q) => $q->whereNull('deleted_at'))
                 ->get(),
-
-            // 'pets' => DB::table('pet')
-            //     ->join('pemilik', 'pet.idpemilik', '=', 'pemilik.idpemilik')
-            //     ->leftJoin('user', 'pemilik.iduser', '=', 'user.iduser')
-            //     ->join('ras_hewan', 'pet.idras_hewan', '=', 'ras_hewan.idras_hewan')
-            //     ->select('pet.*', 'user.nama as nama_pemilik', 'ras_hewan.nama_ras')
-            //     ->get(),
-            
-            // only show rekam medis for today in the "Recent Rekam Medis" widget
             'rekamMediss' => RekamMedis::with('temuDokter.pet', 'roleUser.user')
                 ->whereHas('temuDokter', function($q) {
                     $q->where('status', '!=', 'D')
@@ -85,25 +50,10 @@ class DashboardController extends Controller
                 ->whereHas('temuDokter.pet.pemilik.user', fn($q) => $q->whereNull('deleted_at'))
                 ->whereHas('roleUser.user', fn($q) => $q->whereNull('deleted_at'))
                 ->get()->sortByDesc(function($r) { return optional($r->temuDokter)->waktu_daftar ?? $r->created_at; })->values(),
-
-            // 'rekamMediss' => DB::table('rekam_medis')
-            //     ->join('temu_dokter', 'rekam_medis.idreservasi_dokter', '=', 'temu_dokter.idreservasi_dokter')
-            //     ->join('pet', 'temu_dokter.idpet', '=', 'pet.idpet')
-            //     ->join('role_user', 'rekam_medis.dokter_pemeriksa', '=', 'role_user.idrole_user')
-            //     ->join('user', 'role_user.iduser', '=', 'user.iduser')
-            //     ->select('rekam_medis.*', 'pet.nama as nama_pet', 'user.nama as nama_dokter', 'temu_dokter.waktu_daftar as waktu_daftar')
-            //     ->get(),
-            
             'tindakans' => KodeTindakanTerapi::with('kategori', 'kategoriKlinis')
                 ->whereHas('kategori', fn($q) => $q->whereNull('deleted_at'))
                 ->whereHas('kategoriKlinis', fn($q) => $q->whereNull('deleted_at'))
                 ->get()
-
-            // 'tindakans' => DB::table('kode_tindakan_terapi')
-            //     ->join('kategori', 'kode_tindakan_terapi.idkategori', '=', 'kategori.idkategori')
-            //     ->join('kategori_klinis', 'kode_tindakan_terapi.idkategori_klinis', '=', 'kategori_klinis.idkategori_klinis')
-            //     ->select('kode_tindakan_terapi.*', 'kategori.nama_kategori', 'kategori_klinis.nama_kategori_klinis')
-            //     ->get()
         ];
 
         // Summary counts
@@ -121,16 +71,6 @@ class DashboardController extends Controller
             'dokters' => Dokter::whereHas('user', fn($q) => $q->whereNull('deleted_at'))->count(),
             'perawats' => Perawat::whereHas('user', fn($q) => $q->whereNull('deleted_at'))->count(),
         ];
-
-        // // Summary counts
-        // $stats = [
-        //     'users' => DB::table('user')->count(),
-        //     'pets' => DB::table('pet')->count(),
-        //     'rekam_medis' => DB::table('rekam_medis')->count(),
-        //     'tindakans' => DB::table('kode_tindakan_terapi')->count(),
-        //     'dokters' => DB::table('dokter')->count(),
-        //     'perawats' => DB::table('perawat')->count(),
-        // ];
 
         // Monthly registrations / visits for the last 6 months (based on waktu_daftar)
         $start = Carbon::now()->startOfMonth()->subMonths(5)->toDateString();

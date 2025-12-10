@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Pemilik;
-use App\Models\User;
+use App\Models\DataUser;
 use App\Models\Role;
 use App\Models\RoleUser;
 
@@ -14,7 +14,9 @@ class DatapemilikController extends Controller
 {
     public function index()
     {
-        $pemiliks = Pemilik::with('user')->get();
+        $pemiliks = Pemilik::with('user')->whereHas('user', function($query) {
+            $query->whereNull('deleted_at');
+        })->get();
 
         // $pemiliks = DB::table('pemilik as pm')
         //     ->leftJoin('user as u', 'pm.iduser', '=', 'u.iduser')
@@ -40,8 +42,8 @@ class DatapemilikController extends Controller
         ]);
 
         // Buat user baru
-        $user = User::create([
-            'nama' => $validated['nama'],
+        $user = DataUser::create([
+            'nama' => normalize_name($validated['nama']),
             'email' => $validated['email'],
             'password' => bcrypt($validated['password']),
         ]);
@@ -71,7 +73,7 @@ class DatapemilikController extends Controller
 
         // $pemilik = DB::table('pemilik')->where('idpemilik', $id)->first();
         // if (!$pemilik) abort(404);
-        $users = User::all();
+        $users = DataUser::all();
 
         // $users = DB::table('user')->get();
         return view('resepsionis.datapemilik.edit', compact('pemilik', 'users'));

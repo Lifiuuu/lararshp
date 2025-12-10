@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 
 use Illuminate\Support\Facades\DB;
-use App\Models\User;
+use App\Models\DataUser;
 use App\Models\Perawat;
 use Illuminate\Http\Request;
 use App\Models\RoleUser;
@@ -44,8 +44,8 @@ class PerawatController extends Controller
 
         DB::transaction(function () use ($request) {
             // Create user
-            $user = User::create([
-                'nama' => $request->nama,
+            $user = DataUser::create([
+                'nama' => normalize_name($request->nama),
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
             ]);
