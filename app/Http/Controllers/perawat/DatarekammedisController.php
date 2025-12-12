@@ -15,7 +15,7 @@ class DatarekammedisController extends Controller
     {
         // Use Eloquent: join to allow ordering by temu_dokter.waktu_daftar, eager load relations for the view
         $rekamMediss = RekamMedis::join('temu_dokter', 'rekam_medis.idreservasi_dokter', '=', 'temu_dokter.idreservasi_dokter')
-            ->where('temu_dokter.status', '!=', 'B')
+            ->where('temu_dokter.status', '=', 'P')
             ->whereDate('temu_dokter.waktu_daftar', Carbon::today()->toDateString())
             ->orderBy('temu_dokter.waktu_daftar', 'asc')
             ->select('rekam_medis.*')

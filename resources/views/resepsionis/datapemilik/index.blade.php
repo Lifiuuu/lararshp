@@ -14,6 +14,7 @@
                     <tr>
                         <th>Nama</th>
                         <th>No WA</th>
+                        <th>Alamat</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -22,6 +23,7 @@
                         <tr>
                             <td>{{ $p->user->nama ?? '—' }}</td>
                             <td>{{ $p->no_wa }}</td>
+                            <td>{{ $p->alamat}}</td>
                             <td class="actions">
                                 <a href="{{ route('resepsionis.datapemilik.edit', $p->idpemilik) }}" class="btn btn-sm btn-secondary btn-admin sm">Edit</a>
                                 <form action="{{ route('resepsionis.datapemilik.destroy', $p->idpemilik) }}" method="POST" style="display:inline-block; margin-left:6px;" onsubmit="return confirm('Hapus pemilik ini?')">

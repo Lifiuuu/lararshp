@@ -31,7 +31,7 @@
                             <textarea name="detail" id="detail" class="form-control" rows="4">{{ $detail->detail }}</textarea>
                         </div>
                         <button type="submit" class="btn btn-primary">Update</button>
-                        <a href="{{ route('dokter.detailrekammedis.index') }}" class="btn btn-secondary">Batal</a>
+                        <a href="{{ route('dokter.datarekammedis.index') }}" class="btn btn-secondary">Batal</a>
                     </form>
                 </div>
             </div>
